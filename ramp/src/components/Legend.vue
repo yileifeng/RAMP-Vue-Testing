@@ -1,25 +1,26 @@
 <template>
   <div class="rv-legend">
     <h3>Legend</h3>
-    <md-list>
-      <md-list-item md-expand>
-        <span class="md-list-item-text">News</span>
-
-        <md-list slot="md-expand">
-          <md-list-item class="md-inset">World</md-list-item>
-          <md-list-item class="md-inset">Europe</md-list-item>
-          <md-list-item class="md-inset">South America</md-list-item>
-        </md-list>
-      </md-list-item>
-    </md-list>
+    <LegendComponent v-for="node in nodes" v-bind:key="node.name" :element="node"></LegendComponent>
   </div>
 </template>
 
 <script>
+import LegendComponent from "./LegendComponent";
+
 export default {
   name: "Legend",
   props: {
-    msg: String
+    msg: String,
+    entries: Array
+  },
+  components: {
+    LegendComponent
+  },
+  data: function() {
+    return {
+      nodes: this.$store.state.legendComponents
+    };
   }
 };
 </script>
@@ -28,6 +29,7 @@ export default {
 <style scoped>
 .rv-legend {
   width: 400px;
+  height: 98vh;
   padding: 4px 10px;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
@@ -37,5 +39,8 @@ export default {
   font-weight: 500;
   letter-spacing: 0.005em;
   line-height: 0px;
+}
+.md-list > .md-icon {
+  float: left;
 }
 </style>
