@@ -1,7 +1,15 @@
 <template>
   <div class="rv-legend">
-    <h3>Legend</h3>
     <LegendComponent v-for="node in nodes" v-bind:key="node.name" :element="node"></LegendComponent>
+
+    <!--
+    <DropdownComponent title="Root">
+      <DropdownComponent title="Header One">This is some content.</DropdownComponent>
+      <DropdownComponent title="Header Two">
+        <DropdownComponent title="Subheader One">Test</DropdownComponent>
+      </DropdownComponent>
+    </DropdownComponent>
+    -->
   </div>
 </template>
 
@@ -30,7 +38,6 @@ export default {
 .rv-legend {
   width: 400px;
   height: 98vh;
-  padding: 4px 10px;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
