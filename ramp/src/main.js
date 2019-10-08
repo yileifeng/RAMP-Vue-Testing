@@ -14,8 +14,13 @@ let root = [
     name: 'Root',
     children: [
       {
-        text: 'This is some text content.',
-        type: 'text'
+        content: 'This is some text content.',
+        infoType: 'text'
+      },
+      {
+        content: 'https://i.imgur.com/ojcd4xn.png',
+        infoType: 'image',
+        name: 'Image'
       },
       {
         name: 'Child 1',
