@@ -12,6 +12,8 @@ Vue.config.productionTip = false;
 let root = [
   {
     name: 'Root',
+    toggled: false,
+    wasToggled: false,
     children: [
       {
         content: 'This is some text content.',
@@ -20,10 +22,12 @@ let root = [
       {
         content: 'https://i.imgur.com/ojcd4xn.png',
         infoType: 'image',
-        name: 'Image'
+        name: 'This is an image'
       },
       {
         name: 'Child 1',
+        toggled: false,
+        wasToggled: false,
         children: [
           {
             name: "Child's Child 1"
@@ -32,6 +36,8 @@ let root = [
       },
       {
         name: 'Child 2',
+        toggled: false,
+        wasToggled: false,
         children: [
           {
             name: "Child's Child 2"

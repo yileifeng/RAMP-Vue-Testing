@@ -1,19 +1,21 @@
 <template>
-  <div class="rvTreeComponent">
-    <DropdownComponent :title="element.name" v-if="element.children">
-      <LegendComponent
-        class="md-inset"
-        v-for="node in element.children"
-        :key="node.name"
-        :element="node"
-      >{{ element.name }}</LegendComponent>
-    </DropdownComponent>
-    <div class="rvTreeComponentLeaf" v-else-if="element.infoType === 'text'">{{ element.content }}</div>
-    <div class="rvTreeComponentLeaf" v-else-if="element.infoType === 'image'">
-      <img :src="element.content" :alt="element.name" :title="element.name" />
-    </div>
-    <div class="rvTreeComponentLeaf" v-else>{{ element.name }}</div>
-  </div>
+  <ul style="list-style: none; margin: 8px; padding: 0px;">
+    <li class="rvTreeComponent">
+      <DropdownComponent :element="element" v-if="element.children">
+        <LegendComponent
+          class="md-inset"
+          v-for="node in element.children"
+          :key="node.name"
+          :element="node"
+        >{{ element.name }}</LegendComponent>
+      </DropdownComponent>
+      <div class="rvTreeComponentLeaf" v-else-if="element.infoType === 'text'">{{ element.content }}</div>
+      <div class="rvTreeComponentLeaf" v-else-if="element.infoType === 'image'">
+        <img :src="element.content" :alt="element.name" :title="element.name" />
+      </div>
+      <div class="rvTreeComponentLeaf" v-else>{{ element.name }}</div>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -29,9 +31,6 @@ export default {
 </script>
 
 <style scoped>
-.rvTreeComponent {
-  padding: 2px;
-}
 .rvTreeComponentLeaf {
   padding: 5px;
 }
