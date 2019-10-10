@@ -5,21 +5,21 @@
 </template>
 
 <script>
-import Legend from './components/Legend.vue';
-import Vue from 'vue'
-import VueMaterial from 'vue-material'
-import { MdIcon } from 'vue-material/dist/components';
-import 'vue-material/dist/vue-material.min.css'
+import Legend from "./components/Legend.vue";
+import Vue from "vue";
+import VueMaterial from "vue-material";
+import { MdIcon } from "vue-material/dist/components";
+import "vue-material/dist/vue-material.min.css";
 
 Vue.use(VueMaterial);
 Vue.use(MdIcon);
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     Legend
   }
-}
+};
 </script>
 
 <style>
