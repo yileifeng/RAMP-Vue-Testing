@@ -1,5 +1,6 @@
 <template>
   <div class="rv-legend">
+    <LegendHeader></LegendHeader>
     <LegendComponent v-for="node in nodes" v-bind:key="node.name" :element="node"></LegendComponent>
 
     <!--
@@ -14,6 +15,7 @@
 </template>
 
 <script>
+import LegendHeader from "./LegendHeader";
 import LegendComponent from "./LegendComponent";
 
 export default {
@@ -23,7 +25,8 @@ export default {
     entries: Array
   },
   components: {
-    LegendComponent
+    LegendComponent,
+    LegendHeader
   },
   data: function() {
     return {

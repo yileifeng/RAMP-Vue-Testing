@@ -45,10 +45,28 @@ let root = [
 const store = new Vuex.Store({
   state: {
     legendComponents: root
+  },
+  getters: {
+    getEntries: state => state.legendComponents
+  },
+  mutations: {
+    ADD_ENTRY (state, payload) {
+      // maybe need to check for duplicates
+      const newEntry = {
+        name: payload.name,
+        children: []
+      };
+      state.legendComponents.push(newEntry);
+    }
+  },
+  actions: {
+    addEntry: (context, payload) => {
+      context.commit('ADD_ENTRY', payload);
+    }
   }
 });
 
 new Vue({
   render: h => h(App),
-  store
+  store: store
 }).$mount('#app');
