@@ -1,18 +1,6 @@
 <template>
   <div class="rvDropdown">
-    <div class="rvDropdownTitle noselect" v-on:click="click">
-      <!-- icon -->
-      <i
-        id="icon"
-        :class="{ 'rotate-180' : expanded }"
-        class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
-      >
-        <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" />
-          <path d="M0-.75h24v24H0z" fill="none" />
-        </svg>
-      </i>
-
+    <div class="rvDropdownTitle noselect">
       <!-- name -->
       <span>{{ element.name }}</span>
 
@@ -54,24 +42,15 @@
 
 <script>
 export default {
-  name: "DropdownComponent",
+  name: "LeafComponent",
   props: ["element"],
   data: function() {
     return {
-      expanded: this.element.expanded,
-      toggled: false,
-      clickedToggle: false
+      toggled: false
     };
   },
   methods: {
-    click: function() {
-      if (!this.clickedToggle) {
-        this.expanded = !this.expanded;
-      }
-      this.clickedToggle = false;
-    },
     toggle: function() {
-      this.clickedToggle = true;
       this.element.toggle();
     }
   }

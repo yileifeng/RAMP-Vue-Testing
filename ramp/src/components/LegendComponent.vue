@@ -1,7 +1,7 @@
 <template>
   <ul style="list-style: none; margin: 8px; padding: 0px;">
     <li class="rvTreeComponent">
-      <DropdownComponent :element="element" v-if="element.children">
+      <DropdownComponent :element="element" v-if="element.children.length > 0">
         <LegendComponent
           class="md-inset"
           v-for="node in element.children"
@@ -13,19 +13,21 @@
       <div class="rvTreeComponentLeaf" v-else-if="element.infoType === 'image'">
         <img :src="element.content" :alt="element.name" :title="element.name" />
       </div>
-      <div class="rvTreeComponentLeaf" v-else>{{ element.name }}</div>
+      <LeafComponent :element="element" v-else>{{ element.name }}</LeafComponent>
     </li>
   </ul>
 </template>
 
 <script>
 import DropdownComponent from "./DropdownComponent";
+import LeafComponent from "./LeafComponent";
 
 export default {
   name: "LegendComponent",
   props: ["element"],
   components: {
-    DropdownComponent
+    DropdownComponent,
+    LeafComponent
   }
 };
 </script>

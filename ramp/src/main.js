@@ -3,50 +3,24 @@ import Vuex from 'vuex';
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
 import App from './App.vue';
+import { LayerState } from './classes/LayerState.js';
 
 Vue.use(VueMaterial);
 Vue.use(Vuex);
 
 Vue.config.productionTip = false;
 
-let root = [
-  {
-    name: 'Root',
-    toggled: false,
-    wasToggled: false,
-    children: [
-      {
-        content: 'This is some text content.',
-        infoType: 'text'
-      },
-      {
-        content: 'https://i.imgur.com/ojcd4xn.png',
-        infoType: 'image',
-        name: 'This is an image'
-      },
-      {
-        name: 'Child 1',
-        toggled: false,
-        wasToggled: false,
-        children: [
-          {
-            name: "Child's Child 1"
-          }
-        ]
-      },
-      {
-        name: 'Child 2',
-        toggled: false,
-        wasToggled: false,
-        children: [
-          {
-            name: "Child's Child 2"
-          }
-        ]
-      }
-    ]
-  }
-];
+let root = new LayerState('Root', null);
+let child = new LayerState('Child', root, { expanded: false });
+child.addChild(new LayerState("Child's Child1", child));
+child.addChild(new LayerState("Child's Child2", child));
+
+let child2 = new LayerState('Child1', root);
+child2.addChild(new LayerState("Child's Child1", child2));
+child2.addChild(new LayerState("Child's Child2", child2));
+
+root.addChild(child);
+root.addChild(child2);
 
 const store = new Vuex.Store({
   state: {
@@ -56,13 +30,9 @@ const store = new Vuex.Store({
     getEntries: state => state.legendComponents
   },
   mutations: {
-    ADD_ENTRY (state, payload) {
+    ADD_ENTRY(state, payload) {
       // maybe need to check for duplicates
-      const newEntry = {
-        name: payload.name,
-        children: []
-      };
-      state.legendComponents.push(newEntry);
+      state.legendComponents.addChild(new LayerState(payload.name, root));
     }
   },
   actions: {
