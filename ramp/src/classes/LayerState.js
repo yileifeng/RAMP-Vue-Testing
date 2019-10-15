@@ -5,10 +5,10 @@ export class LayerState {
     this.children = [];
 
     // legend state
-    this.expandable = options && options.expandable ? !!options.expandable : true;
-    this.expanded = options && options.expanded ? !!options.expanded : true;
+    this.expandable = options && options.expandable !== undefined ? !!options.expandable : true;
+    this.expanded = options && options.expanded !== undefined ? !!options.expanded : true;
 
-    this.toggleable = options && options.toggleable ? !!options.toggleable : true;
+    this.toggleable = options && options.toggleable !== undefined ? !!options.toggleable : true;
     this.toggled = true;
     this.wasToggled = false;
   }
