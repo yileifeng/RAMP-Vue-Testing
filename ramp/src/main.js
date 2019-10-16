@@ -12,7 +12,7 @@ Vue.config.productionTip = false;
 
 let root = new LayerState('Root', null);
 let child = new LayerState('Child', root, { expanded: false });
-child.addChild(new LayerState("Child's Child1", child));
+child.addChild(new LayerState("Child's Child1", child, { toggled: false }));
 child.addChild(new LayerState("Child's Child2", child));
 
 let child2 = new LayerState('Child1', root);
