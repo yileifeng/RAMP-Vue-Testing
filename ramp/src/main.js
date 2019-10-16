@@ -35,39 +35,8 @@ const store = new Vuex.Store({
       state.legendComponents.addChild(new LayerState(payload.name, root));
     },
     TOGGLE_ALL_OPTIONS (state, option) {
-      // DFS tree traversal to expand all groups (currently every entry is a group and is expandable)
-      let stack = [];
-      stack.push(state.legendComponents);
-      while (stack) {
-        let legendEntry = stack.pop();
-        // 4 options that can be passed in: "expand", "collapse", "visibilityOn", "visibilityOff" (can probably add more here if needed)
-        switch (option) {
-          case "expand":
-            // expand current legend entry
-            legendEntry.expanded = true;
-            break;
-          case "collapse":
-            // collapse current legend entry
-            legendEntry.expanded = false;
-            break;
-          case "visibilityOn":
-            // turn visibility on for current entry
-            legendEntry.visible = true;
-            break;
-          case "visibilityOff":
-            legendEntry.visible = false;
-            break;
-        }
-        // add all child components to stack to be traversed next, if they exist
-        if (legendEntry.children) {
-          if (legendEntry.children.length > 0) {
-          // in the future may need to add a set of check conditions here depending on what entries we want to traverse (e.g. is expandable or is toggleable)
-          legendEntry.children.forEach(child => {
-            stack.push(child);
-          });
-        }
-        }
-      }
+      // toggle by calling method on root
+      state.legendComponents.toggleAllOptions(option);
     }
   },
   actions: {

@@ -4,7 +4,7 @@
       <!-- icon -->
       <i
         id="icon"
-        :class="{ 'rotate-180' : expanded }"
+        :class="{ 'rotate-180' : element.expanded }"
         class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
       >
         <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +46,7 @@
         </i>
       </div>
     </div>
-    <div class="rvDropdownContent" :class="{ 'hidden' : !expanded}">
+    <div class="rvDropdownContent" :class="{ 'hidden' : !element.expanded}">
       <slot></slot>
     </div>
   </div>
@@ -58,15 +58,13 @@ export default {
   props: ["element"],
   data: function() {
     return {
-      expanded: this.element.expanded,
-      toggled: false,
       clickedToggle: false
     };
   },
   methods: {
     click: function() {
       if (!this.clickedToggle) {
-        this.expanded = !this.expanded;
+        this.element.expanded = !this.element.expanded;
       }
       this.clickedToggle = false;
     },

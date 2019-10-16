@@ -19,11 +19,11 @@
           <path d="M0-.75h24v24H0z" fill="none" />
         </svg>
       </i>
+      <img src="../assets/view.png" class="rv-toggle-visibility" v-on:click="showVisibilityOptions" />
       <div class="expand-options" id="show-expand-options">
         <option class="expand-groups" v-on:click="expandGroups">Expand Groups</option>
         <option class="collapse-groups" v-on:click="collapseGroups">Collapse Groups</option>
       </div>
-      <img src="../assets/view.png" class="rv-toggle-visibility" v-on:click="showVisibilityOptions" />
       <div class="visibility-options" id="show-visibility-options">
         <option class="show-all" v-on:click="showAll">Show All</option>
         <option class="hide-all" v-on:click="hideAll">Hide All</option>
@@ -41,10 +41,8 @@ export default {
   data: function() {
     return {
       newEntryName: "",
-      expandVisibility: false,
-      expandVisibilityDisabled: false,
+      visibilityOptions0: false,
       expandOptions: false,
-      expandOptionsDisabled: false,
       expandDisabled: false,
       collapseDisabled: false,
       showAllDisabled: false,
@@ -58,40 +56,50 @@ export default {
         this.newEntryName = "";
       }
     },
+
     showGroupsOptions: function() {
       // TODO: make as actual popup like RAMP
-      if (!this.expandOptionsDisabled) {
-        // create popup options for collapse/expand all
-        const showExpandOptions = document.querySelector("#show-expand-options");
-        this.expandOptions
-          ? (showExpandOptions.className = "expand-options")
-          : (showExpandOptions.className += "show");
-        this.expandOptions = !this.expandOptions;
-        // disabled visibility options if expand options is open
-        this.expandOptions ? this.expandVisibilityDisabled = true : this.expandVisibilityDisabled = false;
+      const showVisibleOptions = document.querySelector("#show-visibility-options");
+      // hide visibility options if open
+      if (this.visibilityOptions) {
+        this.visibilityOptions = false;
+        showVisibleOptions.className = "visibility-options";
       }
+
+      // create popup options for collapse/expand all
+      const showExpandOptions = document.querySelector("#show-expand-options");
+      this.expandOptions
+        ? (showExpandOptions.className = "expand-options")
+        : (showExpandOptions.className += "show");
+      this.expandOptions = !this.expandOptions;
     },
+
     showVisibilityOptions: function() {
       // TODO: make as actual popup like RAMP
-      if (!this.expandVisibilityDisabled) {
-        // create popup options for hide/show all
-        const showVisibleOptions = document.querySelector("#show-visibility-options");
-        this.expandVisibility
-          ? (showVisibleOptions.className = "visibility-options")
-          : (showVisibleOptions.className += "show");
-        this.expandVisibility = !this.expandVisibility;
-        // disabled expand options if visibility options are open
-        this.expandVisibility ? this.expandOptionsDisabled = true : this.expandOptionsDisabled = false;
+      const showExpandOptions = document.querySelector("#show-expand-options");
+      // hide expand options if open
+      if (this.expandOptions) {
+        this.expandOptions = false;
+        showExpandOptions.className = "expand-options";
       }
+
+      // create popup options for hide/show all
+      const showVisibleOptions = document.querySelector("#show-visibility-options");
+      this.visibilityOptions
+        ? (showVisibleOptions.className = "visibility-options")
+        : (showVisibleOptions.className += "show");
+      this.visibilityOptions = !this.visibilityOptions;
     },
+
     expandGroups: function() {
-      const showVisibleOptions = document.querySelector(".expand-groups");
+      const expandGroupsOption = document.querySelector(".expand-groups");
       if (!this.expandDisabled) {
         this.$store.dispatch("expandCollapseAll", "expand");
         this.expandDisabled = true;
         this.collapseDisabled = false;
       }
     },
+
     collapseGroups: function() {
       const showVisibleOptions = document.querySelector(".collapse-groups");
       if (!this.collapsedDisabled) {
@@ -100,6 +108,7 @@ export default {
         this.expandDisabled = false;
       }
     },
+
     showAll: function() {
       const showVisibleOptions = document.querySelector(".show-all");
       if (!this.showAllDisabled) {
@@ -108,6 +117,7 @@ export default {
         this.hideAllDisabled = false;
       }
     },
+
     hideAll: function() {
       const showVisibleOptions = document.querySelector(".hide-all");
       if (!this.hideAllDisabled) {
