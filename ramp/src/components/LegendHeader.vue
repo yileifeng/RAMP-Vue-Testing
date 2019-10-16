@@ -21,12 +21,12 @@
       </i>
       <img src="../assets/view.png" class="rv-toggle-visibility" v-on:click="showVisibilityOptions" />
       <div class="expand-options" id="show-expand-options">
-        <option class="expand-groups">Expand Groups</option>
-        <option class="collapse-groups">Collapse Groups</option>
+        <option class="expand-groups" v-on:click="expandGroups">Expand Groups</option>
+        <option class="collapse-groups" v-on:click="collapseGroups">Collapse Groups</option>
       </div>
       <div class="visibility-options" id="show-visibility-options">
-        <option class="show-all">Show All</option>
-        <option class="hide-all">Hide All</option>
+        <option class="show-all" v-on:click="showAll">Show All</option>
+        <option class="hide-all" v-on:click="hideAll">Hide All</option>
       </div>
     </div>
   </div>
@@ -39,7 +39,14 @@ import DropdownComponent from "./DropdownComponent";
 export default {
   name: "LegendHeader",
   data: function() {
-    return { newEntryName: "", expandVisibility: false, expandOptions: false, expandDisabled: false };
+    return {
+      newEntryName: "",
+      visibilityOptions0: false,
+      expandOptions: false,
+      expandDisabled: false,
+      collapseDisabled: false,
+      showAllDisabled: false,
+      hideAllDisabled: false };
   },
   methods: {
     addEntry: function() {
@@ -49,8 +56,16 @@ export default {
         this.newEntryName = "";
       }
     },
+
     showGroupsOptions: function() {
       // TODO: make as actual popup like RAMP
+      const showVisibleOptions = document.querySelector("#show-visibility-options");
+      // hide visibility options if open
+      if (this.visibilityOptions) {
+        this.visibilityOptions = false;
+        showVisibleOptions.className = "visibility-options";
+      }
+
       // create popup options for collapse/expand all
       const showExpandOptions = document.querySelector("#show-expand-options");
       this.expandOptions
@@ -58,26 +73,58 @@ export default {
         : (showExpandOptions.className += "show");
       this.expandOptions = !this.expandOptions;
     },
+
     showVisibilityOptions: function() {
       // TODO: make as actual popup like RAMP
+      const showExpandOptions = document.querySelector("#show-expand-options");
+      // hide expand options if open
+      if (this.expandOptions) {
+        this.expandOptions = false;
+        showExpandOptions.className = "expand-options";
+      }
+
       // create popup options for hide/show all
       const showVisibleOptions = document.querySelector("#show-visibility-options");
-      this.expandVisibility
+      this.visibilityOptions
         ? (showVisibleOptions.className = "visibility-options")
         : (showVisibleOptions.className += "show");
-      this.expandVisibility = !this.expandVisibility;
+      this.visibilityOptions = !this.visibilityOptions;
     },
+
     expandGroups: function() {
-      // TODO: expand all groups
+      const expandGroupsOption = document.querySelector(".expand-groups");
+      if (!this.expandDisabled) {
+        this.$store.dispatch("expandCollapseAll", "expand");
+        this.expandDisabled = true;
+        this.collapseDisabled = false;
+      }
     },
+
     collapseGroups: function() {
-      // TODO: collapse all groups
+      const showVisibleOptions = document.querySelector(".collapse-groups");
+      if (!this.collapsedDisabled) {
+        this.$store.dispatch("expandCollapseAll", "collapse");
+        this.collapsedDisabled = true;
+        this.expandDisabled = false;
+      }
     },
+
     showAll: function() {
-      // TODO: turn all visibilities on
+      const showVisibleOptions = document.querySelector(".show-all");
+      if (!this.showAllDisabled) {
+        this.$store.dispatch("toggleVisibilityAll", "visibilityOn");
+        this.showAllDisabled = true;
+        this.hideAllDisabled = false;
+      }
     },
+
     hideAll: function() {
-      // TODO: turn all visibilities off
+      const showVisibleOptions = document.querySelector(".hide-all");
+      if (!this.hideAllDisabled) {
+        this.$store.dispatch("toggleVisibilityAll", "visibilityOff")
+        this.hideAllDisabled = true;
+        this.showAllDisabled = false;
+      }
     }
   }
 };
@@ -179,26 +226,6 @@ export default {
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
-/* .show-all::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-.show-all::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-} */
 .show-all:hover {
   cursor: pointer;
   filter: brightness(90%);

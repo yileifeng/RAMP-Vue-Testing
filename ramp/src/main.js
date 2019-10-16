@@ -33,11 +33,21 @@ const store = new Vuex.Store({
     ADD_ENTRY(state, payload) {
       // maybe need to check for duplicates
       state.legendComponents.addChild(new LayerState(payload.name, root));
+    },
+    TOGGLE_ALL_OPTIONS (state, option) {
+      // toggle by calling method on root
+      state.legendComponents.toggleAllOptions(option);
     }
   },
   actions: {
     addEntry: (context, payload) => {
       context.commit('ADD_ENTRY', payload);
+    },
+    expandCollapseAll: (context, expandable) => {
+      context.commit('TOGGLE_ALL_OPTIONS', expandable);
+    },
+    toggleVisibilityAll: (context, visible) => {
+      context.commit('TOGGLE_ALL_OPTIONS', visible);
     }
   }
 });

@@ -34,9 +34,10 @@
         </i>
       </div>
     </div>
-    <div class="rvDropdownContent" :class="{ 'hidden' : !expanded}">
+    <!-- commented out because of console errors -->
+    <!-- <div class="rvDropdownContent" :class="{ 'hidden' : !expanded}">
       <slot></slot>
-    </div>
+    </div> -->
   </div>
 </template>
 
