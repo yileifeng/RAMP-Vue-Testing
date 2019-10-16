@@ -2,48 +2,21 @@
   <div class="rvDropdown">
     <div class="rvDropdownTitle noselect" v-on:click="click">
       <!-- icon -->
-      <i
-        id="icon"
-        :class="{ 'rotate-180' : element.expanded }"
-        class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
-      >
-        <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" />
-          <path d="M0-.75h24v24H0z" fill="none" />
-        </svg>
-      </i>
+      <md-icon id="icon" :class="{ 'rotate-180': element.expanded }">expand_more</md-icon>
 
       <!-- name -->
       <span>{{ element.name }}</span>
 
       <!-- icon -->
       <div v-if="element.toggleable">
-        <i
+        <md-button
           id="icon"
-          class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
+          class="md-icon-button md-primary md-flat"
           v-on:click="toggle"
-          v-if="element.toggled"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-            />
-          </svg>
-        </i>
-        <i
-          id="icon"
-          class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
-          v-on:click="toggle"
-          v-else
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <path
-              d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path d="M0 0h24v24H0z" fill="none" />
-          </svg>
-        </i>
+          <md-icon class="md-icon-small" v-if="element.toggled" style="width: 20px; height: 20px;">check_box</md-icon>
+          <md-icon class="md-icon-small" v-else>check_box_outline_blank</md-icon>
+        </md-button>
       </div>
     </div>
     <div class="rvDropdownContent" :class="{ 'hidden' : !element.expanded}">
@@ -97,7 +70,7 @@ export default {
   display: flex;
   align-items: center;
   position: relative;
-  padding: 10px;
+  padding: 0px;
 }
 .rvDropdownTitle:hover {
   background: #eee;
@@ -114,6 +87,9 @@ export default {
 .rvDropdownContent {
   transition: max-height 0.7s ease-in;
 }
+.md-icon-button {
+  display: block;
+}
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -125,5 +101,12 @@ export default {
 }
 .md-icon {
   color: #666666;
+}
+.md-icon-small {
+  font-size: 20px !important;
+  opacity: 0.62;
+}
+.md-icon-small:hover {
+  opacity: 1;
 }
 </style>

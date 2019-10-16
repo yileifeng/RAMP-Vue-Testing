@@ -6,38 +6,12 @@
 
       <!-- icon -->
       <div v-if="element.toggleable">
-        <i
-          id="icon"
-          class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
-          v-on:click="toggle"
-          v-if="element.toggled"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-            />
-          </svg>
-        </i>
-        <i
-          id="icon"
-          class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
-          v-on:click="toggle"
-          v-else
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <path
-              d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path d="M0 0h24v24H0z" fill="none" />
-          </svg>
-        </i>
+        <div id="icon" v-on:click="toggle">
+          <md-icon class="md-icon-small" v-if="element.toggled">check_box</md-icon>
+          <md-icon class="md-icon-small" v-else>check_box_outline_blank</md-icon>
+        </div>
       </div>
     </div>
-    <!-- commented out because of console errors -->
-    <!-- <div class="rvDropdownContent" :class="{ 'hidden' : !expanded}">
-      <slot></slot>
-    </div> -->
   </div>
 </template>
 
@@ -105,7 +79,12 @@ export default {
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Opera and Firefox */
 }
-.md-icon {
+.md-icon-small {
   color: #666666;
+  font-size: 20px !important;
+  opacity: 0.62;
+}
+.md-icon-small:hover {
+  opacity: 1;
 }
 </style>
