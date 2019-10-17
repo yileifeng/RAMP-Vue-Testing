@@ -27,6 +27,13 @@ export default {
   methods: {
     toggle: function() {
       this.element.toggle();
+      if (this.element.toggled) {
+        this.$store.getters.getEntries.allUntoggled = false;
+        this.$store.dispatch("updateHeaderOption", "toggled");
+      } else {
+        this.$store.getters.getEntries.allToggled = false;
+        this.$store.dispatch("updateHeaderOption", "untoggled")
+      }
     }
   }
 };

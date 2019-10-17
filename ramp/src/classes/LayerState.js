@@ -4,6 +4,13 @@ export class LayerState {
     this.parent = parent;
     this.children = [];
 
+    // find and store root
+    let curEntry = this;
+    while (curEntry.parent) {
+      curEntry = curEntry.parent;
+    }
+    this.root = curEntry;
+
     // legend state
     this.expandable = options && options.expandable !== undefined ? !!options.expandable : true;
     this.expanded = options && options.expanded !== undefined ? !!options.expanded : true;
@@ -12,17 +19,84 @@ export class LayerState {
     this.toggled = true;
     this.wasToggled = false;
 
-    this.allToggled = this.checkAll('toggled');
-    this.allExpanded = this.checkAll('expanded');
+    this.allToggled = false;
+    this.allUntoggled = false;
+    this.allExpanded = false;
+    this.allCollapsed = false;
   }
 
   addChild(node) {
     this.children.push(node);
+    node.expandable && node.expanded ? this.root.allCollapsed = false : this.root.allExpanded = false;
+    node.toggleable && node.toggled ? this.root.allUntoggled = false : this.root.allToggled = false;
   }
 
-  checkAll(option) {
-    // TO IMPLEMENT:
-    return false;
+  updateHeaderOption(option) {
+    // DFS tree traversal to check all entries
+    let stack = [];
+    // curEntry is the root
+    stack.push(this.root);
+    while (stack.length > 0) {
+      let legendEntry = stack.pop();
+
+      // 4 options that can be passed in: "expanded", "collapsed", "toggled", "untoggled" (add more here if needed)
+      switch (option) {
+        case "expanded":
+          // check if current legend entry is NOT expanded
+          if (!legendEntry.expanded && legendEntry.expandable) {
+            this.root.allExpanded = false;
+            return false;
+          }
+          break;
+        case "collapsed":
+          // check if current legend entry is NOT collapsed
+          if (legendEntry.expanded && legendEntry.expandable && legendEntry.children.length > 0) {
+            this.root.allCollapsed = false;
+            return false;
+          }
+          break;
+        case "toggled":
+          // check if current legend entry is NOT toggled
+          if (!legendEntry.toggled && legendEntry.toggleable) {
+            this.root.allToggled = false;
+            return false;
+          }
+          break;
+        case "untoggled":
+          // check if current legend entry is NOT untoggled
+          if (legendEntry.toggled && legendEntry.toggleable) {
+            this.root.allUntoggled = false;
+            return false;
+          }
+          break;
+      }
+
+      // add all child components to stack to be traversed next, if they exist
+      if (legendEntry.children) {
+        if (legendEntry.children.length > 0) {
+          legendEntry.children.forEach(child => {
+            stack.push(child);
+          });
+        }
+      }
+    }
+
+    // if we reach here then all legend entries do share the same property value
+    switch (option) {
+      case "expanded":
+        this.root.allExpanded = true;
+        break;
+      case "collapsed":
+        this.root.allCollapsed = true;
+        break;
+      case "toggled":
+        this.root.allToggled = true;
+        break;
+      case "untoggled":
+        this.root.allUntoggled = true;
+        break;
+    }
+    return true;
   }
 
   toggle(val, propagate = true) {
@@ -71,9 +145,10 @@ export class LayerState {
   }
 
   toggleAllOptions (option) {
-    // DFS tree traversal to expand all groups (currently every entry is a group and is expandable)
+    // DFS tree traversal to expand/toggle all entries
     let stack = [];
-    stack.push(this);
+    // assuming we are starting from root (calling this method on root, if not we need to find and push root first)
+    stack.push(this.root);
     while (stack.length > 0) {
       let legendEntry = stack.pop();
 
@@ -81,7 +156,7 @@ export class LayerState {
       switch (option) {
         case "expand":
           // expand current legend entry
-          legendEntry.expandable ? legendEntry.expanded = true : legendEntry.expanded = false;
+          legendEntry.expanded = legendEntry.expandable;
           break;
         case "collapse":
           // collapse current legend entry
@@ -89,7 +164,7 @@ export class LayerState {
           break;
         case "visibilityOn":
           // turn visibility on for current entry
-          legendEntry.toggleable ? legendEntry.toggled = true : legendEntry.toggled = false;
+          legendEntry.toggled = legendEntry.toggleable;
           break;
         case "visibilityOff":
           legendEntry.toggled = false;
@@ -99,12 +174,30 @@ export class LayerState {
       // add all child components to stack to be traversed next, if they exist
       if (legendEntry.children) {
         if (legendEntry.children.length > 0) {
-          // in the future may need to add a set of check conditions here depending on what entries we want to traverse (e.g. is expandable or is toggleable)
+          // may need to add a set of check conditions here depending on what entries we want to traverse (e.g. is expandable or is toggleable)
           legendEntry.children.forEach(child => {
             stack.push(child);
           });
         }
       }
+    }
+    switch (option) {
+      case "expand":
+        this.root.allCollapsed = false;
+        this.root.allExpanded = true;
+        break;
+      case "collapse":
+        this.root.allExpanded = false;
+        this.root.allCollapsed = true;
+        break;
+      case "visibilityOn":
+        this.root.allUntoggled = false;
+        this.root.allToggled = true;
+        break;
+      case "visibilityOff":
+        this.root.allToggled = false;
+        this.root.allUntoggled = true;
+        break;
     }
   }
 }

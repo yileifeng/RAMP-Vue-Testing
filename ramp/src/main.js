@@ -27,7 +27,11 @@ const store = new Vuex.Store({
     legendComponents: root
   },
   getters: {
-    getEntries: state => state.legendComponents
+    getEntries: state => state.legendComponents,
+    getAllToggled: state => state.legendComponents.allToggled,
+    getAllUntoggled: state => state.legendComponents.allUntoggled,
+    getAllExpanded: state => state.legendComponents.allExpanded,
+    getAllCollapsed: state => state.legendComponents.allCollapsed
   },
   mutations: {
     ADD_ENTRY(state, payload) {
@@ -37,6 +41,9 @@ const store = new Vuex.Store({
     TOGGLE_ALL_OPTIONS (state, option) {
       // toggle by calling method on root
       state.legendComponents.toggleAllOptions(option);
+    },
+    UPDATE_HEADER_OPTIONS (state, option) {
+      state.legendComponents.updateHeaderOption(option);
     }
   },
   actions: {
@@ -48,6 +55,9 @@ const store = new Vuex.Store({
     },
     toggleVisibilityAll: (context, visible) => {
       context.commit('TOGGLE_ALL_OPTIONS', visible);
+    },
+    updateHeaderOption: (context, option) => {
+      context.commit('UPDATE_HEADER_OPTIONS', option);
     }
   }
 });

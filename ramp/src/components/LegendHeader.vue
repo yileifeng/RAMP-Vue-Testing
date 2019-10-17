@@ -33,20 +33,50 @@
 </template>
 
 <script>
-import LegendComponent from "./LegendComponent";
-import DropdownComponent from "./DropdownComponent";
 
 export default {
   name: "LegendHeader",
   data: function() {
     return {
       newEntryName: "",
-      visibilityOptions0: false,
-      expandOptions: false,
-      expandDisabled: false,
-      collapseDisabled: false,
-      showAllDisabled: false,
-      hideAllDisabled: false };
+      visibilityOptions: false,
+      expandOptions: false };
+  },
+  computed: {
+    allExpanded: function () {
+      return this.$store.getters.getAllExpanded
+    },
+    allToggled: function() {
+      return this.$store.getters.getAllToggled
+    },
+    allUntoggled: function() {
+      return this.$store.getters.getAllUntoggled
+    },
+    allCollapsed: function() {
+      return this.$store.getters.getAllCollapsed
+    }
+  },
+  watch: {
+    allExpanded: function (newValue, oldValue) {
+      // console.log("allExpanded newValue -> oldValue", oldValue, newValue);
+      const expandGroupsOption = document.querySelector(".expand-groups");
+      newValue ? expandGroupsOption.disabled = true : expandGroupsOption.disabled = false;
+    },
+    allToggled: function (newValue, oldValue) {
+      // console.log("allToggled newValue -> oldValue", newValue, oldValue);
+      const showAllOption = document.querySelector(".show-all");
+      newValue ? showAllOption.disabled = true : showAllOption.disabled = false;
+    },
+    allCollapsed: function (newValue, oldValue) {
+      // console.log("allCollapsed newValue -> oldValue", newValue, oldValue);
+      const showCollapseOption = document.querySelector(".collapse-groups");
+      newValue ? showCollapseOption.disabled = true : showCollapseOption.disabled = false;
+    },
+    allUntoggled: function (newValue, oldValue) {
+      // console.log("allUntoggled newValue -> oldValue", newValue, oldValue);
+      const hideAllOption = document.querySelector(".hide-all");
+      newValue ? hideAllOption.disabled = true : hideAllOption.disabled = false;
+    }
   },
   methods: {
     addEntry: function() {
@@ -92,39 +122,23 @@ export default {
     },
 
     expandGroups: function() {
-      const expandGroupsOption = document.querySelector(".expand-groups");
-      if (!this.expandDisabled) {
-        this.$store.dispatch("expandCollapseAll", "expand");
-        this.expandDisabled = true;
-        this.collapseDisabled = false;
-      }
+      // expand all entries possible and set allExpanded property to true
+      this.$store.dispatch("expandCollapseAll", "expand");
     },
 
     collapseGroups: function() {
-      const showVisibleOptions = document.querySelector(".collapse-groups");
-      if (!this.collapsedDisabled) {
-        this.$store.dispatch("expandCollapseAll", "collapse");
-        this.collapsedDisabled = true;
-        this.expandDisabled = false;
-      }
+      // collapse all entries possible and set allCollapsed property to true
+      this.$store.dispatch("expandCollapseAll", "collapse");
     },
 
     showAll: function() {
-      const showVisibleOptions = document.querySelector(".show-all");
-      if (!this.showAllDisabled) {
-        this.$store.dispatch("toggleVisibilityAll", "visibilityOn");
-        this.showAllDisabled = true;
-        this.hideAllDisabled = false;
-      }
+      // toggle visibility on for all entries possible and set allToggled property to true
+      this.$store.dispatch("toggleVisibilityAll", "visibilityOn");
     },
 
     hideAll: function() {
-      const showVisibleOptions = document.querySelector(".hide-all");
-      if (!this.hideAllDisabled) {
-        this.$store.dispatch("toggleVisibilityAll", "visibilityOff")
-        this.hideAllDisabled = true;
-        this.showAllDisabled = false;
-      }
+      // toggle visibility off for all entries possible and set allUntoggled property to true
+      this.$store.dispatch("toggleVisibilityAll", "visibilityOff")
     }
   }
 };
@@ -188,12 +202,12 @@ export default {
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
-.expand-groups:hover {
+.expand-groups:enabled:hover {
   cursor: pointer;
   filter: brightness(90%);
   background: #eee;
 }
-.collapse-groups:hover {
+.collapse-groups:enabled:hover {
   cursor: pointer;
   filter: brightness(90%);
   background: #eee;
@@ -226,12 +240,12 @@ export default {
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
-.show-all:hover {
+.show-all:enabled:hover {
   cursor: pointer;
   filter: brightness(90%);
   background: #eee;
 }
-.hide-all:hover {
+.hide-all:enabled:hover {
   cursor: pointer;
   filter: brightness(90%);
   background: #eee;

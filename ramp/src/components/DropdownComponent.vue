@@ -40,10 +40,24 @@ export default {
         this.element.expanded = !this.element.expanded;
       }
       this.clickedToggle = false;
+      if (this.element.expanded) {
+        this.$store.getters.getEntries.allCollapsed = false;
+        this.$store.dispatch("updateHeaderOption", "expanded");
+      } else {
+        this.$store.getters.getEntries.allExpanded = false;
+        this.$store.dispatch("updateHeaderOption", "collapsed");
+      }
     },
     toggle: function() {
       this.clickedToggle = true;
       this.element.toggle();
+      if (this.element.toggled) {
+        this.$store.getters.getEntries.allUntoggled = false;
+        this.$store.dispatch("updateHeaderOption", "toggled");
+      } else {
+        this.$store.getters.getEntries.allToggled = false;
+        this.$store.dispatch("updateHeaderOption", "untoggled")
+      }
     }
   }
 };
