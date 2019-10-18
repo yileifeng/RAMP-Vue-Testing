@@ -1,5 +1,12 @@
 <template>
-  <ul style="list-style: none; margin: 8px; padding: 0px;">
+  <div v-if="element.isRoot">
+    <LegendComponent
+      v-for="node in element.children"
+      :key="node.name"
+      :element="node"
+    >{{ element.name }}</LegendComponent>
+  </div>
+  <ul style="list-style: none; margin: 8px; padding: 0px;" v-else>
     <li class="rvTreeComponent">
       <DropdownComponent :element="element" v-if="element.children.length > 0">
         <LegendComponent
