@@ -113,9 +113,15 @@ export class LayerState {
     if (this.toggled) {
       if (this.parent && !this.parent.toggled) {
         this.parent.toggle(true, false);
+
+        this.parent.children.forEach(child => {
+          if(this !== child) {
+            child.wasToggled = false;
+          }
+        })
       }
 
-      // handles cases where the parent is toggled ON
+      // handles cases where the layer is toggled ON
       if (!propagate) return;
       this.children.forEach(child => {
         if (!toggledChildren) {
@@ -127,7 +133,7 @@ export class LayerState {
         }
       });
     } else {
-      // handles cases where the parent is toggled OFF
+      // handles cases where the layer is toggled OFF
       // determines whether any siblings are toggled on
       const toggledSiblings = this.parent && this.parent.children.some(child => child.toggleable && child.toggled);
 
