@@ -1,9 +1,8 @@
 export class LayerState {
-  constructor(name, parent, options) {
+  constructor(name, parent, children, options) {
     this.name = name;
     this.parent = parent;
-    this.children = [];
-
+    children === undefined || children.length === 0 ? this.children = [] : this.children = children.map(name => new LayerState(name, this));
     // find and store root
     let curEntry = this;
     while (curEntry.parent) {
@@ -42,34 +41,36 @@ export class LayerState {
 
       // 4 options that can be passed in: "expanded", "collapsed", "toggled", "untoggled" (add more here if needed)
       switch (option) {
-        case "expanded":
+        case "expanded": {
           // check if current legend entry is NOT expanded
           if (!legendEntry.expanded && legendEntry.expandable) {
             this.root.allExpanded = false;
             return false;
           }
           break;
-        case "collapsed":
+        } case "collapsed": {
           // check if current legend entry is NOT collapsed
-          if (legendEntry.expanded && legendEntry.expandable && legendEntry.children.length > 0) {
+          const leafOrRoot = legendEntry.isRoot || legendEntry.children.length === 0;
+          if (legendEntry.expanded && legendEntry.expandable && !leafOrRoot) {
             this.root.allCollapsed = false;
             return false;
           }
           break;
-        case "toggled":
+        } case "toggled": {
           // check if current legend entry is NOT toggled
           if (!legendEntry.toggled && legendEntry.toggleable) {
             this.root.allToggled = false;
             return false;
           }
           break;
-        case "untoggled":
+        } case "untoggled": {
           // check if current legend entry is NOT untoggled
           if (legendEntry.toggled && legendEntry.toggleable) {
             this.root.allUntoggled = false;
             return false;
           }
           break;
+        }
       }
 
       // add all child components to stack to be traversed next, if they exist

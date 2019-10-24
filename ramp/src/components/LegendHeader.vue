@@ -1,14 +1,38 @@
 <template>
   <div class="rv-legend-header">
     <div class="rv-header-icons">
-      <img src="../assets/add.png" class="rv-add-layer" v-on:click="addEntry" />
-      <input
-        class="rv-new-entry"
-        type="text"
-        placeholder="Name of new entry"
-        v-model="newEntryName"
-        v-on:keyup.enter="addEntry"
-      />
+      <img src="../assets/add.png" class="rv-add-layer" v-on:click="displayAddOptions" />
+      <div class="modal">
+        <div class="modal-content">
+          <img src="../assets/add.png" class="rv-add-layer" v-on:click="addEntry" />
+          <span class="close-button" v-on:click="displayAddOptions">&times;</span>
+          <input
+            class="rv-new-entry"
+            type="text"
+            placeholder="Name of new entry"
+            v-model="newEntryName"
+            v-on:keyup.enter="addEntry"
+          />
+          <select class="rv-new-type" v-model="newEntryType">
+            <option value="Single Entry">Single Entry</option>
+            <option value="Group Entry">Group Entry</option>
+          </select>
+
+          <div class="rv-group-children">
+            <div class="group-entry-child">
+              <h4>Child entry:</h4>
+              <form v-on:submit="addNewChild">
+                <input
+                  class="new-child"
+                  type="text"
+                  placeholder="Name of new child entry"
+                />
+              </form>
+              <img src="../assets/remove.png" class="rv-add-layer" v-on:click="removeChild" />
+            </div>
+          </div>
+        </div>
+      </div>
       <i
         id="icon"
         class="md-icon md-icon-font md-icon-image md-list-expand-icon md-theme-default"
@@ -33,69 +57,139 @@
 </template>
 
 <script>
-
 export default {
   name: "LegendHeader",
   data: function() {
     return {
       newEntryName: "",
+      newEntryType: "",
       visibilityOptions: false,
-      expandOptions: false };
+      expandOptions: false
+    };
   },
   computed: {
-    allExpanded: function () {
-      return this.$store.getters.getAllExpanded
+    allExpanded: function() {
+      return this.$store.getters.getAllExpanded;
     },
     allToggled: function() {
-      return this.$store.getters.getAllToggled
+      return this.$store.getters.getAllToggled;
     },
     allUntoggled: function() {
-      return this.$store.getters.getAllUntoggled
+      return this.$store.getters.getAllUntoggled;
     },
     allCollapsed: function() {
-      return this.$store.getters.getAllCollapsed
+      return this.$store.getters.getAllCollapsed;
     }
   },
   watch: {
-    allExpanded: function (newValue, oldValue) {
-      // console.log("allExpanded newValue -> oldValue", oldValue, newValue);
+    allExpanded: function(newValue, oldValue) {
       const expandGroupsOption = document.querySelector(".expand-groups");
-      newValue ? expandGroupsOption.disabled = true : expandGroupsOption.disabled = false;
+      newValue
+        ? (expandGroupsOption.disabled = true)
+        : (expandGroupsOption.disabled = false);
     },
-    allToggled: function (newValue, oldValue) {
-      // console.log("allToggled newValue -> oldValue", newValue, oldValue);
+    allToggled: function(newValue, oldValue) {
       const showAllOption = document.querySelector(".show-all");
-      newValue ? showAllOption.disabled = true : showAllOption.disabled = false;
+      newValue
+        ? (showAllOption.disabled = true)
+        : (showAllOption.disabled = false);
     },
-    allCollapsed: function (newValue, oldValue) {
-      // console.log("allCollapsed newValue -> oldValue", newValue, oldValue);
+    allCollapsed: function(newValue, oldValue) {
       const showCollapseOption = document.querySelector(".collapse-groups");
-      newValue ? showCollapseOption.disabled = true : showCollapseOption.disabled = false;
+      newValue
+        ? (showCollapseOption.disabled = true)
+        : (showCollapseOption.disabled = false);
     },
-    allUntoggled: function (newValue, oldValue) {
-      // console.log("allUntoggled newValue -> oldValue", newValue, oldValue);
+    allUntoggled: function(newValue, oldValue) {
       const hideAllOption = document.querySelector(".hide-all");
-      newValue ? hideAllOption.disabled = true : hideAllOption.disabled = false;
+      newValue
+        ? (hideAllOption.disabled = true)
+        : (hideAllOption.disabled = false);
+    },
+    // watch for the selected layer type changing and display different properties to fill out depending on the type
+    newEntryType: function(newValue, oldValue) {
+      // console.log("newEntryType newValue -> oldValue", newValue, oldValue);
+      const addChildren = document.querySelector(".rv-group-children");
+      if (
+        newValue !== oldValue &&
+        (newValue === "Group Entry" || oldValue === "Group Entry")
+      ) {
+        addChildren.classList.toggle("show-children-option");
+      }
     }
   },
   methods: {
     addEntry: function() {
       // clear entry and call action to add new legend entry
       if (this.newEntryName.trim() !== "") {
-        this.$store.dispatch("addEntry", { name: this.newEntryName });
-        this.newEntryName = "";
+        if (this.newEntryType === "Group Entry") {
+          // new entry to be passed as payload object
+          const newEntry = {
+            name: this.newEntryName,
+            children: []
+          };
+          const childNodes = document.querySelector(".rv-group-children");
+          // for each child entry of the group check if name is not blank and push otherwise
+          for (let i = 0; i < childNodes.children.length; i++) {
+            const curChild = childNodes.children[i];
+            const curChildName = curChild.children[1].firstChild.value;
+            if (curChildName.trim() !== "") {
+              newEntry.children.push(curChild.children[1].firstChild.value);
+            } else {
+              throw new Error(`A child entry name was left blank!`);
+            }
+          }
+          // dispatch action call to add new entry to legend
+          this.$store.dispatch("addEntry", newEntry);
+          this.newEntryName = "";
+        } else if (this.newEntryType === "Single Entry") {
+          this.$store.dispatch("addEntry", { name: this.newEntryName });
+          this.newEntryName = "";
+        } else {
+          throw new Error(`No entry type was selected!`);
+        }
+      } else {
+        throw new Error(`New entry name was left blank!`);
       }
     },
-
+    displayAddOptions: function() {
+      const modal = document.querySelector(".modal");
+      modal.classList.toggle("show-modal");
+    },
+    addNewChild: function(e) {
+      e.preventDefault();
+      // add a new input entry for new child
+      const groupChildren = e.target.parentNode.parentNode;
+      if (
+        e.target.children[0].value.trim() !== "" &&
+        groupChildren.lastChild === e.target.parentNode
+      ) {
+        // clone an identical child form element
+        const newChild = e.target.parentNode.cloneNode(true);
+        newChild.children[1].firstChild.value = "";
+        // not sure how to add vue attributes here (v-on:keyup.enter, v-on:click)
+        newChild.children[1].onsubmit = this.addNewChild;
+        newChild.children[2].onclick = this.removeChild;
+        groupChildren.appendChild(newChild);
+      }
+    },
+    removeChild: function(e) {
+      // remove a specified child input entry
+      const groupChildren = document.querySelector(".rv-group-children");
+      if (groupChildren.children.length > 1) {
+        groupChildren.removeChild(e.target.parentNode);
+      }
+    },
     showGroupsOptions: function() {
       // TODO: make as actual popup like RAMP
-      const showVisibleOptions = document.querySelector("#show-visibility-options");
+      const showVisibleOptions = document.querySelector(
+        "#show-visibility-options"
+      );
       // hide visibility options if open
       if (this.visibilityOptions) {
         this.visibilityOptions = false;
         showVisibleOptions.className = "visibility-options";
       }
-
       // create popup options for collapse/expand all
       const showExpandOptions = document.querySelector("#show-expand-options");
       this.expandOptions
@@ -103,7 +197,6 @@ export default {
         : (showExpandOptions.className += "show");
       this.expandOptions = !this.expandOptions;
     },
-
     showVisibilityOptions: function() {
       // TODO: make as actual popup like RAMP
       const showExpandOptions = document.querySelector("#show-expand-options");
@@ -112,39 +205,40 @@ export default {
         this.expandOptions = false;
         showExpandOptions.className = "expand-options";
       }
-
       // create popup options for hide/show all
-      const showVisibleOptions = document.querySelector("#show-visibility-options");
+      const showVisibleOptions = document.querySelector(
+        "#show-visibility-options"
+      );
       this.visibilityOptions
         ? (showVisibleOptions.className = "visibility-options")
         : (showVisibleOptions.className += "show");
       this.visibilityOptions = !this.visibilityOptions;
     },
-
     expandGroups: function() {
       // expand all entries possible and set allExpanded property to true
       this.$store.dispatch("expandCollapseAll", "expand");
     },
-
     collapseGroups: function() {
       // collapse all entries possible and set allCollapsed property to true
       this.$store.dispatch("expandCollapseAll", "collapse");
     },
-
     showAll: function() {
       // toggle visibility on for all entries possible and set allToggled property to true
       this.$store.dispatch("toggleVisibilityAll", "visibilityOn");
     },
-
     hideAll: function() {
       // toggle visibility off for all entries possible and set allUntoggled property to true
-      this.$store.dispatch("toggleVisibilityAll", "visibilityOff")
+      this.$store.dispatch("toggleVisibilityAll", "visibilityOff");
     }
   }
 };
 </script>
 
 <style scoped>
+h4 {
+  display: inline;
+  padding-right: 5px;
+}
 .rv-legend-header {
   padding: 2px;
   border-bottom: 1px solid #1f1b1b;
@@ -154,13 +248,21 @@ export default {
   padding: 5px;
 }
 .rv-new-entry {
-  width: 65%;
+  width: 50%;
   padding: 0.5rem;
   margin: 10px 8px;
   font-size: 1rem;
-  outline: none;
   border-radius: 0.25rem;
-  border-style: none;
+  border: solid 1px lightgray;
+  box-sizing: border-box;
+  display: inline-block;
+}
+.rv-new-type {
+  width: 20%;
+  padding: 0.5rem;
+  margin: 10px 0;
+  font-size: 1rem;
+  border-radius: 0.25rem;
   border: solid 1px lightgray;
   box-sizing: border-box;
   display: inline-block;
@@ -176,7 +278,9 @@ export default {
 }
 #icon {
   display: inline-block;
-  margin-left: 5px;
+  margin-top: 9px;
+  margin-bottom: 10px;
+  margin-left: 240px;
 }
 #icon:hover {
   cursor: pointer;
@@ -214,7 +318,7 @@ export default {
 }
 .rv-toggle-visibility {
   float: right;
-  margin: 13px 5px 10px;
+  margin: 10px 5px;
 }
 .rv-toggle-visibility:hover {
   cursor: pointer;
@@ -249,6 +353,58 @@ export default {
   cursor: pointer;
   filter: brightness(90%);
   background: #eee;
+}
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.1);
+  transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 1rem 1.5rem;
+  width: 40%;
+  border-radius: 0.5rem;
+}
+.close-button {
+  float: right;
+  width: 35px;
+  line-height: 35px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  background-color: lightgray;
+}
+.close-button:hover {
+  background-color: darkgray;
+}
+.show-modal {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+.rv-group-children {
+  visibility: hidden;
+}
+.show-children-option {
+  visibility: visible;
+}
+form {
+  display: inline-block;
+}
+.new-child {
+  border: 1px solid lightgray;
 }
 @-webkit-keyframes fadeIn {
   from {
