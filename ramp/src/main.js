@@ -11,8 +11,8 @@ Vue.use(Vuex);
 Vue.config.productionTip = false;
 
 let root = new LayerState('Root', null);
-let child = new LayerState('Child', root, { expanded: false });
-child.addChild(new LayerState("Child's Child1", child, { toggled: false }));
+let child = new LayerState('Child', root, [], { expanded: false });
+child.addChild(new LayerState("Child's Child1", child, [], { toggled: false }));
 child.addChild(new LayerState("Child's Child2", child));
 
 let child2 = new LayerState('Child1', root);
@@ -36,7 +36,7 @@ const store = new Vuex.Store({
   mutations: {
     ADD_ENTRY(state, payload) {
       // maybe need to check for duplicates
-      state.legendComponents.addChild(new LayerState(payload.name, root));
+      state.legendComponents.addChild(new LayerState(payload.name, root, payload.children));
     },
     TOGGLE_ALL_OPTIONS (state, option) {
       // toggle by calling method on root
