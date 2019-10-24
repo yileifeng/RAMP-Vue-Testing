@@ -10,10 +10,68 @@ Vue.use(Vuex);
 
 Vue.config.productionTip = false;
 
+let symbStack = [
+  {
+    image: 'http://i.imgur.com/GLFe2mB.png',
+    text: 'British Columbia'
+  },
+  {
+    image: 'https://i.imgur.com/4fHLsIB.gif',
+    text: 'Alberta'
+  },
+  {
+    image: 'https://i.imgur.com/71tMSkW.gif',
+    text: 'Saskatchewan'
+  },
+  {
+    image: 'https://i.imgur.com/ojwsueg.gif',
+    text: 'Manitoba'
+  },
+  {
+    image: 'https://i.imgur.com/Q808QXd.gif',
+    text: 'Ontario'
+  },
+  {
+    image: 'https://i.imgur.com/31XVDOd.gif',
+    text: 'Quebec'
+  },
+  {
+    image: 'https://i.imgur.com/800F3zF.png',
+    text: 'Newfoundland and Labrador'
+  },
+  {
+    image: 'https://i.imgur.com/nNnhP6l.gif',
+    text: 'New Brunswick'
+  },
+  {
+    image: 'https://i.imgur.com/bNEzzZC.gif',
+    text: 'Nova Scotia'
+  },
+  {
+    image: 'https://i.imgur.com/FzQBOxx.gif',
+    text: 'Yukon'
+  },
+  {
+    image: 'https://i.imgur.com/0hiiH4d.gif',
+    text: 'Northwest Territories'
+  },
+  {
+    image: 'http://icons.iconarchive.com/icons/wikipedia/flags/256/CA-NU-Nunavut-Flag-icon.png',
+    text: 'Nunavut'
+  },
+  {
+    image: 'https://i.imgur.com/n5MG5FT.png',
+    text: 'Multiple and National'
+  },
+  {
+    image: 'https://i.imgur.com/iL99d3K.gif',
+    text: 'Prince Edward Island'
+  }
+];
+
 let root = new LayerState('Root', null);
-let child = new LayerState('Child', root, [], { expanded: false });
-child.addChild(new LayerState("Child's Child1", child, [], { toggled: false }));
-child.addChild(new LayerState("Child's Child2", child));
+let child = new LayerState('Symbology Stack', root, [], { expanded: false });
+child.symbologyStack = symbStack;
 
 let child2 = new LayerState('Child1', root);
 child2.addChild(new LayerState("Child's Child1", child2));
