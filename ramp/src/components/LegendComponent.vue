@@ -8,7 +8,8 @@
   </div>
   <ul style="list-style: none; margin: 8px; padding: 0px;" v-else>
     <li class="rvTreeComponent">
-      <DropdownComponent :element="element" v-if="element.children.length > 0">
+      <SymbologyStackComponent :element="element" v-if="element.symbologyStack"></SymbologyStackComponent>
+      <DropdownComponent :element="element" v-else-if="element.children.length > 0">
         <LegendComponent
           class="md-inset"
           v-for="node in element.children"
@@ -28,13 +29,15 @@
 <script>
 import DropdownComponent from "./DropdownComponent";
 import LeafComponent from "./LeafComponent";
+import SymbologyStackComponent from "./SymbologyStackComponent";
 
 export default {
   name: "LegendComponent",
   props: ["element"],
   components: {
     DropdownComponent,
-    LeafComponent
+    LeafComponent,
+    SymbologyStackComponent
   }
 };
 </script>

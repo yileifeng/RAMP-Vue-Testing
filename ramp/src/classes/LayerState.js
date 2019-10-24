@@ -3,6 +3,8 @@ export class LayerState {
     this.name = name;
     this.parent = parent;
     children === undefined || children.length === 0 ? this.children = [] : this.children = children.map(name => new LayerState(name, this));
+    this.symbologyStack = null;
+
     // find and store root
     let curEntry = this;
     while (curEntry.parent) {
