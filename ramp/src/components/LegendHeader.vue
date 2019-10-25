@@ -17,16 +17,20 @@
             <option value="Single Entry">Single Entry</option>
             <option value="Group Entry">Group Entry</option>
           </select>
-
+          <div class="rv-init-settings">
+            <input type="checkbox" class="rv-init-visible" v-model="initVisibility" checked />Visible
+            <input type="checkbox" class="rv-init-expandable" v-model="initExpanded" checked />Expanded
+          </div>
           <div class="rv-group-children">
             <div class="group-entry-child">
               <h4>Child entry:</h4>
               <form v-on:submit="addNewChild">
-                <input
-                  class="new-child"
-                  type="text"
-                  placeholder="Name of new child entry"
-                />
+                <input class="new-child" type="text" placeholder="Name of new child entry" />
+                <input type="checkbox" checked />Visible
+                <input type="checkbox" checked />Expanded
+                <button type="submit" class="rv-add-child">
+                  <img src="../assets/add.png" class="rv-add-layer" />
+                </button>
               </form>
               <img src="../assets/remove.png" class="rv-add-layer" v-on:click="removeChild" />
             </div>
@@ -63,6 +67,8 @@ export default {
     return {
       newEntryName: "",
       newEntryType: "",
+      initVisibility: true,
+      initExpanded: true,
       visibilityOptions: false,
       expandOptions: false
     };
@@ -108,7 +114,6 @@ export default {
     },
     // watch for the selected layer type changing and display different properties to fill out depending on the type
     newEntryType: function(newValue, oldValue) {
-      // console.log("newEntryType newValue -> oldValue", newValue, oldValue);
       const addChildren = document.querySelector(".rv-group-children");
       if (
         newValue !== oldValue &&
@@ -126,15 +131,25 @@ export default {
           // new entry to be passed as payload object
           const newEntry = {
             name: this.newEntryName,
-            children: []
+            children: [],
+            options: {
+              expanded: this.initExpanded,
+              toggled: this.initVisibility
+            }
           };
           const childNodes = document.querySelector(".rv-group-children");
-          // for each child entry of the group check if name is not blank and push otherwise
+          // for each child entry of the group check if name is not blank and push a new object otherwise
           for (let i = 0; i < childNodes.children.length; i++) {
-            const curChild = childNodes.children[i];
-            const curChildName = curChild.children[1].firstChild.value;
+            const curChild = childNodes.children[i].children[1];
+            const curChildName = curChild.firstChild.value;
             if (curChildName.trim() !== "") {
-              newEntry.children.push(curChild.children[1].firstChild.value);
+              newEntry.children.push({
+                name: curChildName,
+                options: {
+                  toggled: curChild.children[1].checked,
+                  expanded: curChild.children[2].checked
+                }
+              });
             } else {
               throw new Error(`A child entry name was left blank!`);
             }
@@ -142,8 +157,15 @@ export default {
           // dispatch action call to add new entry to legend
           this.$store.dispatch("addEntry", newEntry);
           this.newEntryName = "";
+          this.removeAllChildren(childNodes);
         } else if (this.newEntryType === "Single Entry") {
-          this.$store.dispatch("addEntry", { name: this.newEntryName });
+          this.$store.dispatch("addEntry", {
+            name: this.newEntryName,
+            options: {
+              expanded: this.initExpanded,
+              toggled: this.initVisibility
+            }
+          });
           this.newEntryName = "";
         } else {
           throw new Error(`No entry type was selected!`);
@@ -169,7 +191,7 @@ export default {
         newChild.children[1].firstChild.value = "";
         // not sure how to add vue attributes here (v-on:keyup.enter, v-on:click)
         newChild.children[1].onsubmit = this.addNewChild;
-        newChild.children[2].onclick = this.removeChild;
+        newChild.lastChild.onclick = this.removeChild;
         groupChildren.appendChild(newChild);
       }
     },
@@ -179,6 +201,14 @@ export default {
       if (groupChildren.children.length > 1) {
         groupChildren.removeChild(e.target.parentNode);
       }
+    },
+    removeAllChildren: function(groupChildren) {
+      while (groupChildren.children.length > 1) {
+        // clear all child entries
+        groupChildren.removeChild(groupChildren.lastChild);
+      }
+      // reset first child entry (can also reset checkboxes)
+      groupChildren.firstChild.children[1].firstChild.value = "";
     },
     showGroupsOptions: function() {
       // TODO: make as actual popup like RAMP
@@ -275,6 +305,10 @@ h4 {
   cursor: pointer;
   filter: brightness(90%);
   background: #eee;
+}
+.rv-init-settings {
+  display: inline-block;
+  padding-left: 1rem;
 }
 #icon {
   display: inline-block;
@@ -373,7 +407,7 @@ h4 {
   transform: translate(-50%, -50%);
   background-color: white;
   padding: 1rem 1.5rem;
-  width: 40%;
+  width: 55%;
   border-radius: 0.5rem;
 }
 .close-button {
@@ -405,6 +439,10 @@ form {
 }
 .new-child {
   border: 1px solid lightgray;
+}
+.rv-add-child {
+  background-color: white;
+  border: none;
 }
 @-webkit-keyframes fadeIn {
   from {

@@ -94,7 +94,7 @@ const store = new Vuex.Store({
   mutations: {
     ADD_ENTRY(state, payload) {
       // maybe need to check for duplicates
-      state.legendComponents.addChild(new LayerState(payload.name, root, payload.children));
+      state.legendComponents.addChild(new LayerState(payload.name, root, payload.children, payload.options));
     },
     TOGGLE_ALL_OPTIONS (state, option) {
       // toggle by calling method on root
