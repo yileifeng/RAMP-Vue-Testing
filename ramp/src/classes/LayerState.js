@@ -2,7 +2,7 @@ export class LayerState {
   constructor(name, parent, children, options) {
     this.name = name;
     this.parent = parent;
-    children === undefined || children.length === 0 ? this.children = [] : this.children = children.map(name => new LayerState(name, this));
+    children === undefined || children.length === 0 ? this.children = [] : this.children = children.map(child => new LayerState(child.name, this, [], child.options));
     this.symbologyStack = null;
 
     // find and store root
@@ -18,7 +18,7 @@ export class LayerState {
     this.expanded = options && options.expanded !== undefined ? !!options.expanded : true;
 
     this.toggleable = options && options.toggleable !== undefined ? !!options.toggleable : true;
-    this.toggled = true;
+    this.toggled = options && options.toggled !== undefined ? !!options.toggled : true;
     this.wasToggled = false;
 
     this.allToggled = false;
