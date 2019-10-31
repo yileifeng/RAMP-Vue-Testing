@@ -8,13 +8,22 @@
       <span>{{ element.name }}</span>
 
       <!-- icon -->
-      <div v-if="element.toggleable">
-        <md-button
-          id="icon"
-          class="md-icon-button md-primary md-flat"
-          v-on:click="toggle"
-        >
-          <md-icon class="md-icon-small" v-if="element.toggled" style="width: 20px; height: 20px;">check_box</md-icon>
+      <div id="icon" v-on:click="clickedButton = true">
+        <md-menu style="z-index: 10;" md-size="auto" :md-offset-x="-180" :md-offset-y="-30">
+          <md-icon class="md-icon-small" md-menu-trigger>more_horiz</md-icon>
+
+          <md-menu-content>
+            <md-menu-item v-on:click="remove" :disabled="!element.userAdded">Remove</md-menu-item>
+          </md-menu-content>
+        </md-menu>
+      </div>
+      <div v-if="element.toggleable" v-on:click="clickedButton = true">
+        <md-button id="icon" class="md-icon-button md-primary md-flat" v-on:click="toggle">
+          <md-icon
+            class="md-icon-small"
+            v-if="element.toggled"
+            style="width: 20px; height: 20px;"
+          >check_box</md-icon>
           <md-icon class="md-icon-small" v-else>check_box_outline_blank</md-icon>
         </md-button>
       </div>
@@ -31,15 +40,15 @@ export default {
   props: ["element"],
   data: function() {
     return {
-      clickedToggle: false
+      clickedButton: false
     };
   },
   methods: {
     click: function() {
-      if (!this.clickedToggle) {
+      if (!this.clickedButton) {
         this.element.expanded = !this.element.expanded;
       }
-      this.clickedToggle = false;
+      this.clickedButton = false;
       if (this.element.expanded) {
         this.$store.getters.getEntries.allCollapsed = false;
         this.$store.dispatch("updateHeaderOption", "expanded");
@@ -49,15 +58,26 @@ export default {
       }
     },
     toggle: function() {
-      this.clickedToggle = true;
       this.element.toggle();
       if (this.element.toggled) {
         this.$store.getters.getEntries.allUntoggled = false;
         this.$store.dispatch("updateHeaderOption", "toggled");
       } else {
         this.$store.getters.getEntries.allToggled = false;
-        this.$store.dispatch("updateHeaderOption", "untoggled")
+        this.$store.dispatch("updateHeaderOption", "untoggled");
       }
+    },
+    remove: function() {
+      // first remove children node
+      for (let i = this.element.children.length - 1; i >= 0; i--) {
+        this.element.children.splice(i, 1);
+      }
+
+      // remove this node from the parent
+      let node = this.element.parent.children.findIndex(c => {
+        return c === this.element;
+      });
+      this.element.parent.children.splice(node, 1);
     }
   }
 };

@@ -134,7 +134,8 @@ export default {
             children: [],
             options: {
               expanded: this.initExpanded,
-              toggled: this.initVisibility
+              toggled: this.initVisibility,
+              userAdded: true
             }
           };
           const childNodes = document.querySelector(".rv-group-children");
@@ -147,7 +148,8 @@ export default {
                 name: curChildName,
                 options: {
                   toggled: curChild.children[1].checked,
-                  expanded: curChild.children[2].checked
+                  expanded: curChild.children[2].checked,
+                  userAdded: true
                 }
               });
             } else {
@@ -163,7 +165,8 @@ export default {
             name: this.newEntryName,
             options: {
               expanded: this.initExpanded,
-              toggled: this.initVisibility
+              toggled: this.initVisibility,
+              userAdded: true
             }
           });
           this.newEntryName = "";
