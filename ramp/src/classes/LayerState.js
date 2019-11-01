@@ -22,10 +22,12 @@ export class LayerState {
     this.toggled = options && options.toggled !== undefined ? !!options.toggled : true;
     this.wasToggled = false;
 
-    this.allToggled = false;
-    this.allUntoggled = false;
-    this.allExpanded = false;
-    this.allCollapsed = false;
+    if (this.isRoot) {
+      this.allToggled = false;
+      this.allUntoggled = false;
+      this.allExpanded = false;
+      this.allCollapsed = false;
+    }
   }
 
   addChild(node) {
@@ -37,7 +39,6 @@ export class LayerState {
   updateHeaderOption(option) {
     // DFS tree traversal to check all entries
     let stack = [];
-    // curEntry is the root
     stack.push(this.root);
     while (stack.length > 0) {
       let legendEntry = stack.pop();
@@ -61,7 +62,7 @@ export class LayerState {
           break;
         } case "toggled": {
           // check if current legend entry is NOT toggled
-          if (!legendEntry.toggled && legendEntry.toggleable) {
+          if (!legendEntry.toggled && legendEntry.toggleable && legendEntry.isSet) {
             this.root.allToggled = false;
             return false;
           }
@@ -113,16 +114,28 @@ export class LayerState {
 
     // determines whether any children were toggled on prior to this element being toggled off
     const toggledChildren = this.children ? this.children.some(child => child.toggleable && child.wasToggled) : false;
-
     if (this.toggled) {
       if (this.parent && !this.parent.toggled) {
         this.parent.toggle(true, false);
 
         this.parent.children.forEach(child => {
-          if(this !== child) {
+          if (this !== child) {
             child.wasToggled = false;
           }
         })
+      }
+
+      // toggle applies differently for entries part of visibility set
+      if (this.isSet) {
+        // toggle off visibility for all siblings in set as only one can be visible at all times
+        this.parent.children.forEach(sibling => {
+          if (sibling.toggled && sibling !== this) {
+            sibling.toggle(false, false);
+            sibling.wasToggled = false;
+            sibling.lastToggled = false;
+          }
+        });
+        this.lastToggled = true;
       }
 
       // handles cases where the layer is toggled ON
@@ -175,7 +188,7 @@ export class LayerState {
           break;
         case "visibilityOn":
           // turn visibility on for current entry
-          legendEntry.toggled = legendEntry.toggleable;
+          legendEntry.isSet && legendEntry.lastToggled ? legendEntry.toggled = true : !legendEntry.isSet ? legendEntry.toggled = legendEntry.toggleable : legendEntry.toggled = false;
           break;
         case "visibilityOff":
           legendEntry.toggled = false;
@@ -209,6 +222,85 @@ export class LayerState {
         this.root.allToggled = false;
         this.root.allUntoggled = true;
         break;
+    }
+  }
+}
+
+
+export class VisibilitySet extends LayerState {
+  constructor(name, parent, children, options) {
+    super(name, parent, children, options);
+    // for visibility sets ensure only one child can be toggled initially
+    if (children && children.length) {
+      let childrenToggled = 0;
+      this.children.forEach(child => {
+        if (child.toggled) childrenToggled++;
+        child.isSet = true
+      });
+
+      // if rules are broken default to toggling visibility on for first child only
+      if (childrenToggled > 1) {
+        this.children.forEach(child => child.toggled = false);
+        this.children[0].toggled = true;
+      }
+    }
+
+  }
+
+  addChild(node) {
+    // mark children of visibility group set as part of set
+    node.isSet = true;
+    // choose to turn visibility on for the first possible child initially
+    const toggledChild = this.children.some(child => child.toggled);
+    if (!node.parent.toggled || toggledChild) {
+      node.toggled = false;
+      node.lastToggled = false;
+      node.wasToggled = false;
+    } else {
+      node.toggled = true;
+      node.lastToggled = true;
+      node.wasToggled = true;
+    }
+    this.children.push(node);
+    node.toggled || toggledChild ? this.root.allUntoggled = false : this.root.allToggled = false;
+    node.expandable && node.expanded ? this.root.allCollapsed = false : this.root.allExpanded = false;
+  }
+
+  toggle(val, propagate = true) {
+    // ensure there is only one child element can be toggled on in the set
+    this.toggled = val != undefined ? val : !this.toggled;
+    if (val === undefined) {
+      this.wasToggled = false;
+    }
+    if (this.toggled) {
+      if (this.parent && !this.parent.toggled) {
+        this.parent.toggle(true, false);
+        this.parent.children.forEach(child => {
+          if (this !== child) {
+            child.wasToggled = false;
+          }
+        })
+      }
+      // handles cases where the layer is toggled ON
+      if (!propagate) return;
+      if (this.children && this.children.length) {
+        const lastVisible = this.children.find(child => child.lastToggled);
+        if (lastVisible) lastVisible.toggle(true, false);
+      }
+    } else {
+      // handles cases where the layer is toggled OFF
+      // determines whether any siblings are toggled on
+      const toggledSiblings = this.parent && this.parent.children.some(child => child.toggleable && child.toggled);
+      if (this.parent && !toggledSiblings) {
+        this.parent.toggle(false, false);
+      }
+      if (!propagate) return;
+      this.children.forEach(child => {
+        if (child.toggled) {
+          child.wasToggled = true;
+        }
+        child.toggle(false);
+      });
     }
   }
 }

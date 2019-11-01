@@ -14,10 +14,16 @@
           </md-menu-content>
         </md-menu>
       </div>
-      <div v-if="element.toggleable">
+      <div v-if="element.toggleable && !element.isSet">
         <div id="icon" v-on:click="toggle">
           <md-icon class="md-icon-small" v-if="element.toggled">check_box</md-icon>
           <md-icon class="md-icon-small" v-else>check_box_outline_blank</md-icon>
+        </div>
+      </div>
+      <div v-else-if="element.toggleable && element.isSet">
+        <div id="icon" v-on:click="toggleSet">
+          <md-icon class="md-icon-small" v-if="element.toggled">radio_button_checked</md-icon>
+          <md-icon class="md-icon-small" v-else>radio_button_unchecked</md-icon>
         </div>
       </div>
     </div>
@@ -49,6 +55,9 @@ export default {
         return c === this.element;
       });
       this.element.parent.children.splice(node, 1);
+    },
+    toggleSet: function() {
+      this.element.toggle();
     }
   }
 };

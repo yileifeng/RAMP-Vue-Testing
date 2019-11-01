@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
 import App from './App.vue';
-import { LayerState } from './classes/LayerState.js';
+import { LayerState, VisibilitySet } from './classes/LayerState.js';
 
 Vue.use(VueMaterial);
 Vue.use(Vuex);
@@ -69,16 +69,23 @@ let symbStack = [
   }
 ];
 
-let root = new LayerState('Root', null);
-let child = new LayerState('Symbology Stack', root, [], { expanded: false });
+let root = new LayerState("Root", null);
+let child = new LayerState("Symbology Stack", root, [], { expanded: false });
 child.symbologyStack = symbStack;
 
-let child2 = new LayerState('Child1', root);
+let child2 = new LayerState("Child1", root);
 child2.addChild(new LayerState("Child's Child1", child2));
 child2.addChild(new LayerState("Child's Child2", child2));
 
+// visibility set
+let child3 = new VisibilitySet("Visibility Set", root);
+child3.addChild(new LayerState("Set Child1", child3));
+child3.addChild(new LayerState("Set Child2", child3));
+child3.addChild(new LayerState("Set Child3", child3));
+
 root.addChild(child);
 root.addChild(child2);
+root.addChild(child3);
 
 const store = new Vuex.Store({
   state: {
