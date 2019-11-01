@@ -5,6 +5,15 @@
       <span>{{ element.name }}</span>
 
       <!-- icon -->
+      <div id="icon">
+        <md-menu style="z-index: 10;" md-size="auto" :md-offset-x="-180" :md-offset-y="-30">
+          <md-icon class="md-icon-small" md-menu-trigger>more_horiz</md-icon>
+
+          <md-menu-content>
+            <md-menu-item v-on:click="remove" :disabled='!element.userAdded'>Remove</md-menu-item>
+          </md-menu-content>
+        </md-menu>
+      </div>
       <div v-if="element.toggleable">
         <div id="icon" v-on:click="toggle">
           <md-icon class="md-icon-small" v-if="element.toggled">check_box</md-icon>
@@ -32,8 +41,14 @@ export default {
         this.$store.dispatch("updateHeaderOption", "toggled");
       } else {
         this.$store.getters.getEntries.allToggled = false;
-        this.$store.dispatch("updateHeaderOption", "untoggled")
+        this.$store.dispatch("updateHeaderOption", "untoggled");
       }
+    },
+    remove: function() {
+      let node = this.element.parent.children.findIndex(c => {
+        return c === this.element;
+      });
+      this.element.parent.children.splice(node, 1);
     }
   }
 };

@@ -12,6 +12,7 @@ export class LayerState {
     }
     this.root = curEntry;
     this.isRoot = this.parent === null;
+    this.userAdded = options && options.userAdded !== undefined ? !!options.userAdded : false;
 
     // legend state
     this.expandable = options && options.expandable !== undefined ? !!options.expandable : true;
