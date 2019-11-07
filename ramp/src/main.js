@@ -82,6 +82,10 @@ let child3 = new VisibilitySet("Visibility Set", root);
 child3.addChild(new LayerState("Set Child1", child3));
 child3.addChild(new LayerState("Set Child2", child3));
 child3.addChild(new LayerState("Set Child3", child3));
+// let subChild3 = new LayerState("Set Group Child", child3);
+// subChild3.addChild(new LayerState("Set SubChild1", subChild3));
+// subChild3.addChild(new LayerState("Set SubChild2", subChild3));
+// child3.addChild(subChild3);
 
 root.addChild(child);
 root.addChild(child2);
