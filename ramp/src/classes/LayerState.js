@@ -62,7 +62,7 @@ export class LayerState {
           break;
         } case "toggled": {
           // check if current legend entry is NOT toggled
-          if (!legendEntry.toggled && legendEntry.toggleable && legendEntry.isSet) {
+          if (!legendEntry.toggled && legendEntry.toggleable && !legendEntry.isSet) {
             this.root.allToggled = false;
             return false;
           }
@@ -129,7 +129,7 @@ export class LayerState {
       if (this.isSet) {
         // toggle off visibility for all siblings in set as only one can be visible at all times
         this.parent.children.forEach(sibling => {
-          if (sibling.toggled && sibling !== this) {
+          if (sibling !== this) {
             sibling.toggle(false, false);
             sibling.wasToggled = false;
             sibling.lastToggled = false;
