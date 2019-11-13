@@ -14,17 +14,25 @@
           </md-menu-content>
         </md-menu>
       </div>
-      <div v-if="element.toggleable && !element.isSet">
-        <div id="icon" v-on:click="toggle">
-          <md-icon class="md-icon-small" v-if="element.toggled">check_box</md-icon>
+      <div v-if="element.toggleable && !element.isSet" v-on:click="clickedButton = true">
+        <md-button id="icon" class="md-icon-button md-primary md-flat" v-on:click="toggle">
+          <md-icon
+            class="md-icon-small"
+            v-if="element.toggled"
+            style="width: 20px; height: 20px;"
+          >check_box</md-icon>
           <md-icon class="md-icon-small" v-else>check_box_outline_blank</md-icon>
-        </div>
+        </md-button>
       </div>
-      <div v-else-if="element.toggleable && element.isSet">
-        <div id="icon" v-on:click="toggle">
-          <md-icon class="md-icon-small" v-if="element.toggled">radio_button_checked</md-icon>
+      <div v-else-if="element.toggleable && element.isSet" v-on:click="clickedButton = true">
+        <md-button id="icon" class="md-icon-button md-primary md-flat" v-on:click="toggle">
+          <md-icon
+            class="md-icon-small"
+            v-if="element.toggled"
+            style="width: 20px; height: 20px;"
+          >radio_button_checked</md-icon>
           <md-icon class="md-icon-small" v-else>radio_button_unchecked</md-icon>
-        </div>
+        </md-button>
       </div>
     </div>
   </div>
@@ -75,13 +83,16 @@ export default {
   display: none;
   transition: 0.3s;
 }
+.md-icon-button {
+  display: block;
+}
 .rvDropdownTitle {
   font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   position: relative;
-  padding: 10px;
+  padding: 0px;
 }
 .rvDropdownTitle:hover {
   background: #eee;
@@ -114,5 +125,8 @@ export default {
 }
 .md-icon-small:hover {
   opacity: 1;
+}
+.md-icon {
+  color: #666666;
 }
 </style>
