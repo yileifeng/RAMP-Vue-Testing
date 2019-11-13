@@ -30,48 +30,24 @@ let symbStack = [
   {
     image: 'https://i.imgur.com/Q808QXd.gif',
     text: 'Ontario'
-  },
-  {
-    image: 'https://i.imgur.com/31XVDOd.gif',
-    text: 'Quebec'
-  },
-  {
-    image: 'https://i.imgur.com/800F3zF.png',
-    text: 'Newfoundland and Labrador'
-  },
-  {
-    image: 'https://i.imgur.com/nNnhP6l.gif',
-    text: 'New Brunswick'
-  },
-  {
-    image: 'https://i.imgur.com/bNEzzZC.gif',
-    text: 'Nova Scotia'
-  },
-  {
-    image: 'https://i.imgur.com/FzQBOxx.gif',
-    text: 'Yukon'
-  },
-  {
-    image: 'https://i.imgur.com/0hiiH4d.gif',
-    text: 'Northwest Territories'
-  },
-  {
-    image: 'http://icons.iconarchive.com/icons/wikipedia/flags/256/CA-NU-Nunavut-Flag-icon.png',
-    text: 'Nunavut'
-  },
-  {
-    image: 'https://i.imgur.com/n5MG5FT.png',
-    text: 'Multiple and National'
-  },
-  {
-    image: 'https://i.imgur.com/iL99d3K.gif',
-    text: 'Prince Edward Island'
   }
 ];
 
 let root = new LayerState("Root", null);
 let child = new LayerState("Symbology Stack", root, [], { expanded: false });
 child.symbologyStack = symbStack;
+
+let textChild = {
+  infoType: 'text',
+  content: 'This is an example of some text content directly on the legend.'
+}
+
+let imageChild = {
+  infoType: 'image',
+  name: 'Cat.',
+  content: 'https://i.imgur.com/Tch3WoG.png'
+}
+
 
 let child2 = new LayerState("Child1", root);
 child2.addChild(new LayerState("Child's Child1", child2));
@@ -86,6 +62,8 @@ child3.addChild(new LayerState("Set Child3", child3));
 // subChild3.addChild(new LayerState("Set SubChild1", subChild3));
 // subChild3.addChild(new LayerState("Set SubChild2", subChild3));
 // child3.addChild(subChild3);
+root.addChild(textChild);
+root.addChild(imageChild);
 
 root.addChild(child);
 root.addChild(child2);
