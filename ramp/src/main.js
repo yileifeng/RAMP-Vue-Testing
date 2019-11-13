@@ -50,14 +50,14 @@ let imageChild = {
 
 
 let child2 = new LayerState("Child1", root);
-child2.addChild(new LayerState("Child's Child1", child2));
-child2.addChild(new LayerState("Child's Child2", child2));
+child2.addChild(new LayerState("Child's Child1", child2, [], { icon: 'https://i.imgur.com/q5vvj6u.png' }));
+child2.addChild(new LayerState("Child's Child2", child2, [], { icon: 'https://i.imgur.com/bJKYzI1.png' }));
 
 // visibility set
 let child3 = new VisibilitySet("Visibility Set", root);
-child3.addChild(new LayerState("Set Child1", child3));
-child3.addChild(new LayerState("Set Child2", child3));
-child3.addChild(new LayerState("Set Child3", child3));
+child3.addChild(new LayerState("Set Child1", child3, [], { icon: 'https://i.imgur.com/5MJhYas.png' }));
+child3.addChild(new LayerState("Set Child2", child3, [], { icon: 'https://i.imgur.com/X5DO36e.jpg' }));
+child3.addChild(new LayerState("Set Child3", child3, [], { icon: 'https://i.imgur.com/Sndb557.png' }));
 // let subChild3 = new LayerState("Set Group Child", child3);
 // subChild3.addChild(new LayerState("Set SubChild1", subChild3));
 // subChild3.addChild(new LayerState("Set SubChild2", subChild3));

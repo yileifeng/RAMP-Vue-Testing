@@ -2,6 +2,12 @@
   <div class="rvDropdown">
     <div class="rvDropdownTitle noselect">
       <!-- name -->
+      <div style="display: flex;" v-if="element.icon">
+        <div class="symbologyIcon">
+          <img :src="element.icon" />
+        </div>
+      </div>
+
       <span>{{ element.name }}</span>
 
       <!-- icon -->
@@ -128,5 +134,19 @@ export default {
 }
 .md-icon {
   color: #666666;
+}
+.symbologyIcon {
+  background: white;
+  width: 32px;
+  height: 32px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
+}
+.symbologyIcon img {
+  width: 28px;
 }
 </style>
