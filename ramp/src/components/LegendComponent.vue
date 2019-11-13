@@ -6,7 +6,7 @@
       :element="node"
     >{{ element.name }}</LegendComponent>
   </div>
-  <ul style="list-style: none; margin: 8px; padding: 0px;" v-else>
+  <ul style="list-style: none; margin-left: 8px; padding: 0px;" v-else>
     <li class="rvTreeComponent">
       <SymbologyStackComponent :element="element" v-if="element.symbologyStack"></SymbologyStackComponent>
       <DropdownComponent :element="element" v-else-if="element.children.length > 0">
