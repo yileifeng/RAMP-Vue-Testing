@@ -430,6 +430,7 @@ h4 {
   visibility: visible;
   transform: scale(1);
   transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+  z-index: 1000;
 }
 .rv-group-children {
   visibility: hidden;
