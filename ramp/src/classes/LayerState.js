@@ -2,7 +2,6 @@ export class LayerState {
   constructor(name, parent, children, options) {
     this.name = name;
     this.parent = parent;
-    children === undefined || children.length === 0 ? this.children = [] : this.children = children.map(child => new LayerState(child.name, this, [], child.options));
     this.symbologyStack = null;
 
     // find and store root
@@ -22,7 +21,13 @@ export class LayerState {
 
     this.toggleable = options && options.toggleable !== undefined ? !!options.toggleable : true;
     this.toggled = options && options.toggled !== undefined ? !!options.toggled : true;
+    // toggle off if group parent is initially toggled off
+    if (this.parent && !this.parent.toggled && !this.parent.isRoot) {
+      this.toggled = false;
+    }
     this.wasToggled = false;
+
+    children === undefined || children.length === 0 ? this.children = [] : this.children = children.map(child => new LayerState(child.name, this, [], child.options));
 
     if (this.isRoot) {
       this.allToggled = false;
