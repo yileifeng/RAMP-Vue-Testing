@@ -4,7 +4,7 @@
       v-for="(item, index) in display"
       :key="index"
       :class="'symbol-'+index"
-      :style="{ zIndex: 8000 - index }"
+      :style="{ zIndex: 20 - index }"
       class="symbologyIcon"
     >
       <img :src="item.image" />
@@ -45,5 +45,6 @@ export default {
 .symbol-2 {
   margin-left: -30px;
   margin-top: 4px;
+  margin-right: 5px;
 }
 </style>
