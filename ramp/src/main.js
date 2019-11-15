@@ -51,7 +51,10 @@ let imageChild = {
 
 let child2 = new GroupEntry("Child1", root);
 child2.addChild(new LayerState("Child's Child1", child2, [], { icon: 'https://i.imgur.com/q5vvj6u.png' }));
-child2.addChild(new LayerState("Child's Child2", child2, [], { icon: 'https://i.imgur.com/bJKYzI1.png' }));
+let childGroup = new GroupEntry("Child group", child2);
+childGroup.addChild(new LayerState("Nested Child1", childGroup, [], { icon: 'https://i.imgur.com/bJKYzI1.png' }));
+childGroup.addChild(new LayerState("Nested Child2", childGroup, [], { icon: 'https://i.imgur.com/bJKYzI1.png' }));
+child2.addChild(childGroup);
 
 // visibility set
 let child3 = new VisibilitySet("Visibility Set", root);

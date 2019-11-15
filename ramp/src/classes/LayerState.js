@@ -115,8 +115,8 @@ export class LayerState {
       this.wasToggled = false;
     }
     // edge case if parent is part of a visibility set
-    if (this.parent && this.parent.isSet && !this.parent.toggled) {
-      this.wasToggled = false;
+    if (this.parent && !this.parent.toggled) {
+      this.toggled = false;
     }
 
     if (this.toggled) {
@@ -127,20 +127,11 @@ export class LayerState {
           if (this !== child) {
             child.wasToggled = false;
           }
-        })
+        });
       }
 
       // toggle applies differently for entries part of visibility set
       if (this.isSet) {
-        // toggle off visibility for all siblings in set as only one can be visible at all times
-        this.parent.children.forEach(sibling => {
-          if (sibling !== this) {
-            sibling.toggle(false, false);
-            sibling.wasToggled = false;
-            sibling.lastToggled = false;
-          }
-        });
-        this.lastToggled = true;
         this.toggleOffSiblings();
       }
       this.wasToggled = true;
