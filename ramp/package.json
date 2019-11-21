@@ -20,7 +20,11 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "@ag-grid-community/all-modules": "22.0.0",
+    "@ag-grid-community/core": "^22.0.0",
+    "@ag-grid-community/vue": "22.0.0",
+    "vue-property-decorator": "7.3.0"
   },
   "eslintConfig": {
     "root": true,
