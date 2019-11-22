@@ -3,6 +3,8 @@ export class LayerState {
     this.name = name;
     this.parent = parent;
     this.symbologyStack = null;
+    this.tableOpen = false;
+    // do we want to store table data?
 
     // find and store root
     let curEntry = this;

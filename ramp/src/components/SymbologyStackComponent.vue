@@ -8,7 +8,7 @@
       <SymbologyStackIcon :stack="element.symbologyStack" v-else></SymbologyStackIcon>
 
       <!-- name -->
-      <span>{{ element.name }}</span>
+      <span v-on:click="openTable">{{ element.name }}</span>
 
       <!-- icon -->
       <div v-if="element.toggleable">
@@ -30,17 +30,20 @@
         {{ symbol.text }}
       </div>
     </div>
+    <GridComponent v-if="element.tableOpen"></GridComponent>
   </div>
 </template>
 
 <script>
 import SymbologyStackIcon from "./SymbologyStackIcon";
+import GridComponent from "./GridComponent";
 
 export default {
   name: "SymbologyStackComponent",
   props: ["element"],
   components: {
-    SymbologyStackIcon
+    SymbologyStackIcon,
+    GridComponent
   },
   data: function() {
     return {
@@ -71,9 +74,13 @@ export default {
         this.$store.getters.getEntries.allToggled = false;
         this.$store.dispatch("updateHeaderOption", "untoggled");
       }
+    },
+    openTable: function() {
+      // *** find a way to prevent multiple table panels open at once
+      this.element.tableOpen = !this.element.tableOpen;
     }
   }
-};
+}
 </script>
 
 <style scoped>

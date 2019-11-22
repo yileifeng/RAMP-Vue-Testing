@@ -109,6 +109,8 @@ const store = new Vuex.Store({
   }
 });
 
+export const bus = new Vue();
+
 new Vue({
   render: h => h(App),
   store: store
