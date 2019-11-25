@@ -3,7 +3,8 @@
         class="ag-grid-test ag-theme-balham"
         :columnDefs="columnDefs"
         :rowData="rowData"
-        :modules="modules">
+        :modules="modules"
+        :suppressDragLeaveHidesColumns="true">
     </ag-grid-vue>
 </template>
 
