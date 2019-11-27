@@ -37,12 +37,34 @@ export class LayerState {
       this.allExpanded = false;
       this.allCollapsed = false;
     }
+
+    // hardcoded table attributes to try to get grid working first
+    this.columnDefs = [
+      {headerName: 'OBJECTID', field: 'OBJECTID', sortable: true, filter: 'agNumberColumnFilter'},
+      {headerName: 'COUNTRY', field: 'COUNTRY', sortable: true, filter: 'agTextColumnFilter'},
+      {headerName: 'NAME', field: 'NAME', sortable: true, filter: 'agTextColumnFilter'},
+      {headerName: 'DATE', field: 'DATE', sortable: true, filter: 'agDateColumnFilter'},
+    ];
+
+    this.rowData = [
+      {OBJECTID: 1, COUNTRY: 'Mexico', NAME: 'Cornwall Pipeline', DATE: '01/01/2020'},
+      {OBJECTID: 2, COUNTRY: 'Canada', NAME: 'Mainline', DATE: '12/25/2019'},
+      {OBJECTID: 3, COUNTRY: 'United States', NAME: 'Bluewater Pipeline Co', DATE: '11/29/2019'}
+   ];
   }
 
   addChild(node) {
     this.children.push(node);
     node.expandable && node.expanded ? this.root.allCollapsed = false : this.root.allExpanded = false;
     node.toggleable && node.toggled ? this.root.allUntoggled = false : this.root.allToggled = false;
+  }
+
+  getAttributes() {
+    return this.columnDefs;
+  }
+
+  getRowData() {
+    return this.rowData;
   }
 
   updateHeaderOption(option) {
