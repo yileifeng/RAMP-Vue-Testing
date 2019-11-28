@@ -1,5 +1,4 @@
 import { GridOptions, GridApi } from 'ag-grid-community';
-import { PanelManager } from './panel-manager';
 import { setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter } from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
 
@@ -15,12 +14,9 @@ export default class TableBuilder {
 
 	init(baseLayer) {
 		this.baseLayer = baseLayer;
-		this.panelManager = new PanelManager(baseLayer);
-		this.panelManager.reload = this.reloadTable.bind(this);
 	}
 
 	openTable(baseLayer) {
-		this.panelManager.panelStateManager = baseLayer.panelStateManager;
 		const attrs = baseLayer.getAttributes();
 		this.attributeHeaders = attrs.map(attr => attr.headerName);
 		if (attrs.length > 0) {
@@ -29,19 +25,18 @@ export default class TableBuilder {
 	}
 
 	createTable(attributes, baseLayer) {
-		const self = this;
-
 		const columns: Array<any> = [];
 		// first set up column header names
 		attributes.forEach(attr =>
 			columns.push({
-                columnInfo: attr,
+				columnInfo: attr,
 				columnName: attr.field,
 				rowData: [],
 			})
-		);
+        );
+        const rowData = baseLayer.getRowData();
 		// populate columns with row data
-		baseLayer.rowData.forEach(row => {
+		rowData.forEach(row => {
 			for (const attr in row) {
 				const matchingCol = columns.find(col => col.columnName === attr);
 				matchingCol.rowData.push(row[attr]);
@@ -61,7 +56,7 @@ export default class TableBuilder {
 				floatingFilterComponent: undefined,
 				cellRenderer: cell => cell.value,
 				suppressSorting: !column.columnInfo.sortable,
-                suppressFilter: false,
+				suppressFilter: false,
 				sort: '', // TODO
 				// hide: column.column !== undefined && column.column.visible !== undefined ? !column.column.visible : false, TODO
 			};
@@ -69,36 +64,33 @@ export default class TableBuilder {
 			// set up floating filters and column header
 			const fieldInfo = column.columnInfo;
 			if (fieldInfo) {
+                // testing text filters first
+				setUpTextFilter(
+					colDef,
+					false, // lazy filters
+					true, // strict match enabled
+					column.value
+				);
 				// floating filters can be of type number, date, text (text can be of type text or selector)
-				if (fieldInfo.filter === NUMBER_TYPE) {
-					setUpNumberFilter(
-						colDef,
-						column.value,
-						this.panelManager.panelStateManager
-					);
-			    } else if (fieldInfo.filter === DATE_TYPE) {
-					setUpDateFilter(
-						colDef,
-						column.value, // idk what this is yet
-						this.panelManager.panelStateManager
-					);
-				} else if (fieldInfo.filter === TEXT_TYPE) {
-					if (fieldInfo.isSelector) {
-						setUpSelectorFilter(
-							colDef,
-							column.value,
-							this.panelManager.panelStateManager
-						);
-					} else {
-						setUpTextFilter(
-							colDef,
-							false, // lazy filters
-							false, // strict match enabled
-							column.value,
-							this.panelManager.panelStateManager
-						);
-					}
-				}
+				// if (fieldInfo.filter === NUMBER_TYPE) {
+				// 	setUpNumberFilter(colDef, column.value);
+				// } else if (fieldInfo.filter === DATE_TYPE) {
+				// 	setUpDateFilter(
+				// 		colDef,
+				// 		column.value, // idk what this is yet
+				// 	);
+				// } else if (fieldInfo.filter === TEXT_TYPE) {
+				// 	if (fieldInfo.isSelector) {
+				// 		setUpSelectorFilter(colDef, column.value);
+				// 	} else {
+				// 		setUpTextFilter(
+				// 			colDef,
+				// 			false, // lazy filters
+				// 			false, // strict match enabled
+				// 			column.value
+				// 		);
+				// 	}
+				// }
 			}
 
 			setUpHeaderComponent(colDef, this.tableOptions);
@@ -107,7 +99,6 @@ export default class TableBuilder {
 	}
 
 	reloadTable(baseLayer) {
-		this.panelManager.panel.close();
 		this.openTable(baseLayer);
 	}
 }
@@ -127,7 +118,6 @@ export default interface TableBuilder {
 	baseLayer: any;
 	tableOptions: GridOptions;
 	tableApi: GridApi;
-	panelManager: PanelManager;
 	translations: any;
 	legendBlock: any;
 	loadingTimeout: any;
