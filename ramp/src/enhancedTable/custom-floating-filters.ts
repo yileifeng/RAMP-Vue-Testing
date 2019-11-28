@@ -1,9 +1,11 @@
 import { NUMBER_FILTER_TEMPLATE, DATE_FILTER_TEMPLATE, TEXT_FILTER_TEMPLATE, SELECTOR_FILTER_TEMPLATE } from "./templates";
 
 
-function setUpMinMaxFilters(colDef, defaultValue, panelStateManager) {
-    let min = panelStateManager.getColumnFilter([colDef.field + ' min']);
-    let max = panelStateManager.getColumnFilter([colDef.field + ' max']);
+function setUpMinMaxFilters(colDef, defaultValue) {
+    // let min = panelStateManager.getColumnFilter([colDef.field + ' min']);
+    // let max = panelStateManager.getColumnFilter([colDef.field + ' max']);
+    let min = -Infinity;
+    let max = Infinity;
 
     if (min !== undefined || max !== undefined) {
         // if value saved was null means filter was cleared
@@ -13,15 +15,13 @@ function setUpMinMaxFilters(colDef, defaultValue, panelStateManager) {
         max = (max === null) ? '' : (max === undefined ? defaultValue.split(',')[1] : max);
         return defaultValue = `${min},${max}`;
     }
-
     return undefined;
-
 }
 
 /** Sets up number floating filter accounting for static types and default values */
-export function setUpNumberFilter(colDef: any, defaultValue: any, panelStateManager: any) {
+export function setUpNumberFilter(colDef: any, defaultValue: any) {
 
-    const minAndMaxFilters = setUpMinMaxFilters(colDef, defaultValue, panelStateManager);
+    const minAndMaxFilters = setUpMinMaxFilters(colDef, defaultValue);
     defaultValue = minAndMaxFilters !== undefined ? minAndMaxFilters : defaultValue;
 
     //Column should filter numbers properly
@@ -31,9 +31,9 @@ export function setUpNumberFilter(colDef: any, defaultValue: any, panelStateMana
 }
 
 /** Sets up date floating filter accounting for static types and default values */
-export function setUpDateFilter(colDef: any, defaultValue: any, panelStateManager: any) {
+export function setUpDateFilter(colDef: any, defaultValue: any) {
 
-    const minAndMaxFilters = setUpMinMaxFilters(colDef, defaultValue, panelStateManager);
+    const minAndMaxFilters = setUpMinMaxFilters(colDef, defaultValue);
     defaultValue = minAndMaxFilters !== undefined ? minAndMaxFilters : defaultValue;
 
     colDef.minWidth = 423;
@@ -63,44 +63,44 @@ export function setUpDateFilter(colDef: any, defaultValue: any, panelStateManage
 
 /** Sets up text floating filter accounting for static types, default values and selector types */
 export function setUpTextFilter(colDef: any, lazyFilterEnabled: boolean,
-    searchStrictMatchEnabled: boolean, defaultValue: any, panelStateManager: any) {
+    searchStrictMatchEnabled: boolean, defaultValue: any) {
     // if PanelStateManager has a value saved, it is going to override the default value in the config
-    defaultValue = panelStateManager.getColumnFilter(colDef.field) !== undefined ?
-        panelStateManager.getColumnFilter(colDef.field) :
-        defaultValue;
+    // defaultValue = panelStateManager.getColumnFilter(colDef.field) !== undefined ?
+    //     panelStateManager.getColumnFilter(colDef.field) :
+    //     defaultValue;
 
     colDef.floatingFilterComponent = TextFloatingFilter;
-    if (!searchStrictMatchEnabled) {
-        // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-        let disregardAccents = function (s) {
-            if (isNaN(s)) {
-                // check if s is a number before trying to convert it to lowercase (otherwise throws error)
-                let r = s.toLowerCase();
-                r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
-                r = r.replace(new RegExp("æ", 'g'), "ae");
-                r = r.replace(new RegExp("ç", 'g'), "c");
-                r = r.replace(new RegExp("[èéêë]", 'g'), "e");
-                r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
-                r = r.replace(new RegExp("ñ", 'g'), "n");
-                r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
-                r = r.replace(new RegExp("œ", 'g'), "oe");
-                r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
-                r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
-                return r;
-            }
-            return s;
-        }
+    // if (!searchStrictMatchEnabled) {
+    //     // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
+    //     let disregardAccents = function (s) {
+    //         if (isNaN(s)) {
+    //             // check if s is a number before trying to convert it to lowercase (otherwise throws error)
+    //             let r = s.toLowerCase();
+    //             r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+    //             r = r.replace(new RegExp("æ", 'g'), "ae");
+    //             r = r.replace(new RegExp("ç", 'g'), "c");
+    //             r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+    //             r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+    //             r = r.replace(new RegExp("ñ", 'g'), "n");
+    //             r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
+    //             r = r.replace(new RegExp("œ", 'g'), "oe");
+    //             r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+    //             r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+    //             return r;
+    //         }
+    //         return s;
+    //     }
 
-        // for individual columns
-        colDef.filterParams.textFormatter = function (s) {
-            return disregardAccents(s);
-        }
+    //     // for individual columns
+    //     colDef.filterParams.textFormatter = function (s) {
+    //         return disregardAccents(s);
+    //     }
 
-        // for global search
-        colDef.getQuickFilterText = function (params) {
-            return disregardAccents(params.value);
-        }
-    }
+    //     // for global search
+    //     colDef.getQuickFilterText = function (params) {
+    //         return disregardAccents(params.value);
+    //     }
+    // }
 
     // default to regex filtering for text columns
     if (!lazyFilterEnabled) {
@@ -120,15 +120,15 @@ export function setUpTextFilter(colDef: any, lazyFilterEnabled: boolean,
 }
 
 /**Sets up a selector floating filter accounting for static types and default values*/
-export function setUpSelectorFilter(colDef: any, defaultValue: any, panelStateManager: any) {
+export function setUpSelectorFilter(colDef: any, defaultValue: any) {
 
     // if there was a previously saved value, that takes precedence over default config selector filter
     // if the previously saved value was null, it means the selector filter was cleared on table close/reload
     // so no default filter is set
-    let value = (panelStateManager.getColumnFilter(colDef.field) !== undefined) ?
-        (panelStateManager.getColumnFilter(colDef.field) === null ? undefined :
-            panelStateManager.getColumnFilter(colDef.field)) :
-        defaultValue;
+    // let value = (panelStateManager.getColumnFilter(colDef.field) !== undefined) ?
+    //     (panelStateManager.getColumnFilter(colDef.field) === null ? undefined :
+    //         panelStateManager.getColumnFilter(colDef.field)) :
+    //     defaultValue;
 
     colDef.floatingFilterComponent = SelectorFloatingFilter;
 
@@ -159,14 +159,13 @@ export class TextFloatingFilter {
         this.eGui = document.createElement('div');
         this.preLoadedValue();
         this.scope.inputChanged = () => {
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, this.scope.input);
             this.onFloatingFilterChanged({ model: this.getModel() });
         }
 
         // in case there are default filters, change model as soon as element is ready in DOM
-        $('.rv-input').ready(() => {
-            this.onFloatingFilterChanged({ model: this.getModel() });
-        });
+        // $('.rv-input').ready(() => {
+        //     this.onFloatingFilterChanged({ model: this.getModel() });
+        // });
     };
 
     /**
@@ -175,37 +174,37 @@ export class TextFloatingFilter {
      * If so fills col filter from either panelStateManager or default value from config
      */
     preLoadedValue(): void {
-        let reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
+        // let reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
 
-        if (typeof reloadedVal === 'string') {
-            // UNESCAPE all special chars (remove the backslash) when reloading table
-            const escRegex = /\\[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
-            // remFilter stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
-            let remFilter = reloadedVal;
-            let newFilter = '';
-            let escMatch = escRegex.exec(reloadedVal);
-            let lastIdx = 0;
+        // if (typeof reloadedVal === 'string') {
+        //     // UNESCAPE all special chars (remove the backslash) when reloading table
+        //     const escRegex = /\\[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+        //     // remFilter stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
+        //     let remFilter = reloadedVal;
+        //     let newFilter = '';
+        //     let escMatch = escRegex.exec(reloadedVal);
+        //     let lastIdx = 0;
 
-            while (escMatch) {
-                // update all variables after finding an escaped special char, preserving all text except the backslash
-                newFilter = newFilter + reloadedVal.substr(lastIdx, escMatch.index - lastIdx) + escMatch[0].slice(-1);
-                lastIdx = escMatch.index + 2;
-                remFilter = reloadedVal.substr(escMatch.index + 2);
-                escMatch = escRegex.exec(reloadedVal);
-            }
-            newFilter = newFilter + remFilter;
-            reloadedVal = newFilter;
-        }
+        //     while (escMatch) {
+        //         // update all variables after finding an escaped special char, preserving all text except the backslash
+        //         newFilter = newFilter + reloadedVal.substr(lastIdx, escMatch.index - lastIdx) + escMatch[0].slice(-1);
+        //         lastIdx = escMatch.index + 2;
+        //         remFilter = reloadedVal.substr(escMatch.index + 2);
+        //         escMatch = escRegex.exec(reloadedVal);
+        //     }
+        //     newFilter = newFilter + remFilter;
+        //     reloadedVal = newFilter;
+        // }
 
-        if (reloadedVal !== undefined) {
-            this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(reloadedVal, this.params.isStatic);
-            this.scope = this.params.map.$compile(this.eGui);
-            this.scope.input = reloadedVal;
-        } else {
-            this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(this.params.defaultValue, this.params.isStatic);
-            this.scope = this.params.map.$compile(this.eGui);
-            this.scope.input = this.params.defaultValue !== undefined ? this.params.defaultValue : '';
-        }
+        // if (reloadedVal !== undefined) {
+        //     this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(reloadedVal, this.params.isStatic);
+        //     this.scope = this.params.map.$compile(this.eGui);
+        //     this.scope.input = reloadedVal;
+        // } else {
+        //     this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(this.params.defaultValue, this.params.isStatic);
+        //     this.scope = this.params.map.$compile(this.eGui);
+        //     this.scope.input = this.params.defaultValue !== undefined ? this.params.defaultValue : '';
+        // }
     }
 
 
@@ -230,7 +229,7 @@ export class TextFloatingFilter {
     onParentModelChanged(parentModel: any) {
         if (parentModel === null) {
             this.scope.input = '';
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, this.scope.input);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, this.scope.input);
         }
     }
 }
@@ -247,7 +246,7 @@ export class NumberFloatingFilter {
         this.eGui = document.createElement('div');
         (<any>this.eGui).class = 'rv-min-max';
 
-        this.currentValues = this.preLoadedValue;
+        // this.currentValues = this.preLoadedValue;
 
         this.minFilterInput = this.eGui.querySelector(".rv-min");
         this.maxFilterInput = this.eGui.querySelector(".rv-max");
@@ -256,9 +255,9 @@ export class NumberFloatingFilter {
         this.maxFilterInput.addEventListener('input', this.onMaxInputBoxChanged.bind(this));
 
         // in case there are default filters, change model as soon as element is ready in DOM
-        $('.rv-min-max').ready(() => {
-            this.onFloatingFilterChanged({ model: this.getModel() });
-        });
+        // $('.rv-min-max').ready(() => {
+        //     this.onFloatingFilterChanged({ model: this.getModel() });
+        // });
     }
 
     /**
@@ -266,35 +265,35 @@ export class NumberFloatingFilter {
      * Determines if preloaded value exists.
      * If so fills col filter from either panelStateManager or default value from config
      */
-    get preLoadedValue(): any {
-        const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
-        const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
+    // get preLoadedValue(): any {
+        // const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
+        // const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
 
-        const defaultMinVal = (this.params.defaultValue === undefined ||
-            this.params.defaultValue.split(',')[0] === '') ? null :
-            Number(this.params.defaultValue.split(',')[0]);
+        // const defaultMinVal = (this.params.defaultValue === undefined ||
+        //     this.params.defaultValue.split(',')[0] === '') ? null :
+        //     Number(this.params.defaultValue.split(',')[0]);
 
-        const defaultMaxVal = (this.params.defaultValue === undefined ||
-            this.params.defaultValue.split(',')[1] === '') ? null :
-            Number(this.params.defaultValue.split(',')[1]);
+        // const defaultMaxVal = (this.params.defaultValue === undefined ||
+        //     this.params.defaultValue.split(',')[1] === '') ? null :
+        //     Number(this.params.defaultValue.split(',')[1]);
 
-        if (reloadedMinVal !== undefined || reloadedMaxVal !== undefined) {
+        // if (reloadedMinVal !== undefined || reloadedMaxVal !== undefined) {
 
-            this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(`${reloadedMinVal},${reloadedMaxVal}`, this.params.isStatic);
+        //     this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(`${reloadedMinVal},${reloadedMaxVal}`, this.params.isStatic);
 
-            return {
-                min: reloadedMinVal !== undefined ? reloadedMinVal : null,
-                max: reloadedMaxVal !== undefined ? reloadedMaxVal : null,
-            }
-        } else {
-            this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(this.params.defaultValue, this.params.isStatic);
+        //     return {
+        //         min: reloadedMinVal !== undefined ? reloadedMinVal : null,
+        //         max: reloadedMaxVal !== undefined ? reloadedMaxVal : null,
+        //     }
+        // } else {
+        //     this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(this.params.defaultValue, this.params.isStatic);
 
-            return {
-                min: defaultMinVal,
-                max: defaultMaxVal
-            }
-        }
-    }
+        //     return {
+        //         min: defaultMinVal,
+        //         max: defaultMaxVal
+        //     }
+        // }
+    // }
 
     /** Update filter minimum */
     onMinInputBoxChanged() {
@@ -312,7 +311,7 @@ export class NumberFloatingFilter {
         // save value on panel reload manager
         let key = this.params.currColumn.field + ' min';
 
-        this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
+        // this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
 
@@ -332,7 +331,7 @@ export class NumberFloatingFilter {
         // save value on panel reload manager
         let key = this.params.currColumn.field + ' max';
 
-        this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
+        // this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
 
@@ -365,8 +364,8 @@ export class NumberFloatingFilter {
         if (parentModel === null) {
             this.minFilterInput.value = '';
             this.maxFilterInput.value = '';
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' max', null);
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' min', null);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' max', null);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' min', null);
         }
     }
 
@@ -387,21 +386,21 @@ export class DateFloatingFilter {
         this.scope.minChanged = () => {
             // save value on panel reload manager
             let key = this.params.currColumn.field + ' min';
-            this.params.panelStateManager.setColumnFilter(key, this.scope.min !== null ? this.scope.min.toString() : null);
+            // this.params.panelStateManager.setColumnFilter(key, this.scope.min !== null ? this.scope.min.toString() : null);
             this.onFloatingFilterChanged({ model: this.getModel() });
         };
 
         this.scope.maxChanged = () => {
             // save value on panel reload manager
             let key = this.params.currColumn.field + ' max';
-            this.params.panelStateManager.setColumnFilter(key, this.scope.max !== null ? this.scope.max.toString() : null);
+            // this.params.panelStateManager.setColumnFilter(key, this.scope.max !== null ? this.scope.max.toString() : null);
             this.onFloatingFilterChanged({ model: this.getModel() });
         };
 
         // in case there are default filters, change model as soon as element is ready in DOM
-        $('.rv-date-picker').ready(() => {
-            this.onFloatingFilterChanged({ model: this.getModel() });
-        });
+        // $('.rv-date-picker').ready(() => {
+        //     this.onFloatingFilterChanged({ model: this.getModel() });
+        // });
     }
 
     /**
@@ -410,31 +409,31 @@ export class DateFloatingFilter {
      * If so fills col filter from either panelStateManager or default value from config
      */
     preLoadedValue(): void {
-        const defaultMinVal = this.params.value !== undefined &&
-            this.params.value.split(',')[0] !== '' ?
-            new Date(this.params.value.split(',')[0]) : null;
+        // const defaultMinVal = this.params.value !== undefined &&
+        //     this.params.value.split(',')[0] !== '' ?
+        //     new Date(this.params.value.split(',')[0]) : null;
 
-        const defaultMaxVal = this.params.value !== undefined &&
-            this.params.value.split(',')[1] !== '' ?
-            new Date(this.params.value.split(',')[1]) : null;
+        // const defaultMaxVal = this.params.value !== undefined &&
+        //     this.params.value.split(',')[1] !== '' ?
+        //     new Date(this.params.value.split(',')[1]) : null;
 
-        const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
-        const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
+        // const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
+        // const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
 
-        if (reloadedMinVal !== undefined || reloadedMaxVal !== undefined) {
+        // if (reloadedMinVal !== undefined || reloadedMaxVal !== undefined) {
 
-            this.eGui = $(DATE_FILTER_TEMPLATE(`${reloadedMinVal},${reloadedMaxVal}`, this.params.isStatic))[0];
-            (<any>this.eGui).class = 'rv-date-picker'
-            this.scope = this.params.map.$compile(this.eGui);
-            this.scope.min = reloadedMinVal !== undefined ? reloadedMinVal : null;
-            this.scope.max = reloadedMaxVal !== undefined ? reloadedMaxVal : null;
-        } else {
-            this.eGui = $(DATE_FILTER_TEMPLATE(this.params.value, this.params.isStatic))[0];
-            (<any>this.eGui).class = 'rv-date-picker'
-            this.scope = this.params.map.$compile(this.eGui);
-            this.scope.min = defaultMinVal;
-            this.scope.max = defaultMaxVal;
-        }
+        //     this.eGui = $(DATE_FILTER_TEMPLATE(`${reloadedMinVal},${reloadedMaxVal}`, this.params.isStatic))[0];
+        //     (<any>this.eGui).class = 'rv-date-picker'
+        //     this.scope = this.params.map.$compile(this.eGui);
+        //     this.scope.min = reloadedMinVal !== undefined ? reloadedMinVal : null;
+        //     this.scope.max = reloadedMaxVal !== undefined ? reloadedMaxVal : null;
+        // } else {
+        //     this.eGui = $(DATE_FILTER_TEMPLATE(this.params.value, this.params.isStatic))[0];
+        //     (<any>this.eGui).class = 'rv-date-picker'
+        //     this.scope = this.params.map.$compile(this.eGui);
+        //     this.scope.min = defaultMinVal;
+        //     this.scope.max = defaultMaxVal;
+        // }
     }
 
     /** Helper function to determine filter model */
@@ -471,8 +470,8 @@ export class DateFloatingFilter {
         if (parentModel === null) {
             this.scope.min = null;
             this.scope.max = null;
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' max', null);
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' min', null);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' max', null);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' min', null);
         }
     }
 
@@ -490,7 +489,7 @@ export class SelectorFloatingFilter {
     init(params: any) {
         this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.preLoadedValue();
+        // this.preLoadedValue();
 
         // keep track of the number of distinct row values for the column
         // these will form the selector drop down
@@ -517,14 +516,14 @@ export class SelectorFloatingFilter {
                 }
             });
             selectedOptions += ']';
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, selectedOptions);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, selectedOptions);
             this.onFloatingFilterChanged({ model: this.getModel() })
         }
 
         // in case there are default filters, change model as soon as element is ready in DOM
-        $('.rv-selector').ready(() => {
-            this.onFloatingFilterChanged({ model: this.getModel() });
-        });
+        // $('.rv-selector').ready(() => {
+        //     this.onFloatingFilterChanged({ model: this.getModel() });
+        // });
 
     }
 
@@ -533,29 +532,29 @@ export class SelectorFloatingFilter {
      * Determines if preloaded value exists.
      * If so fills col filter from either panelStateManager or default value from config
      */
-    preLoadedValue(): void {
-        const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field) === null ? '' :
-            this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
-        function getDefaultOptions(substr) {
-            return substr !== '[' && substr !== ']' && substr !== ', ';
-        }
+    // preLoadedValue(): void {
+        // const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field) === null ? '' :
+        //     this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
+        // function getDefaultOptions(substr) {
+        //     return substr !== '[' && substr !== ']' && substr !== ', ';
+        // }
 
-        this.eGui = reloadedVal !== undefined ?
-            $(SELECTOR_FILTER_TEMPLATE(reloadedVal, this.params.isStatic))[0] :
-            $(SELECTOR_FILTER_TEMPLATE(this.params.value, this.params.isStatic))[0];
+        // this.eGui = reloadedVal !== undefined ?
+        //     $(SELECTOR_FILTER_TEMPLATE(reloadedVal, this.params.isStatic))[0] :
+        //     $(SELECTOR_FILTER_TEMPLATE(this.params.value, this.params.isStatic))[0];
 
-        (<any>this.eGui).class = 'rv-selector';
-        this.scope = this.params.map.$compile(this.eGui);
+        // (<any>this.eGui).class = 'rv-selector';
+        // this.scope = this.params.map.$compile(this.eGui);
 
-        // tab index is set to -3 by default
-        // keep this here so the selector is keyboard accessible
-        this.eGui.tabIndex = 0;
+        // // tab index is set to -3 by default
+        // // keep this here so the selector is keyboard accessible
+        // this.eGui.tabIndex = 0;
 
-        this.scope.selectedOptions = reloadedVal !== undefined ?
-            reloadedVal.split('"').filter(getDefaultOptions) :
-            (this.params.value !== undefined ?
-                this.params.value.split('"').filter(getDefaultOptions) : '');
-    }
+        // this.scope.selectedOptions = reloadedVal !== undefined ?
+        //     reloadedVal.split('"').filter(getDefaultOptions) :
+        //     (this.params.value !== undefined ?
+        //         this.params.value.split('"').filter(getDefaultOptions) : '');
+    // }
 
     /** Helper function to determine filter model */
     getModel(): any {
@@ -573,7 +572,7 @@ export class SelectorFloatingFilter {
     onParentModelChanged(parentModel: any) {
         if (parentModel === null) {
             this.scope.selectedOptions = [];
-            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, null);
+            // this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, null);
         }
     }
 }
