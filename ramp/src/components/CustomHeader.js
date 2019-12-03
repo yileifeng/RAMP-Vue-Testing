@@ -2,16 +2,16 @@ import Vue from 'vue';
 
 export default Vue.extend({
 	template: `
-		<div style="display: flex; flex: 1; align-items: center;">
-			<div @click="onSortRequested('asc', $event)" style="display: flex; flex: 1; align-items:center;">
-				<span class="customHeaderLabel">{{params.displayName}}</span>
-				<span v-if="params.enableSorting && sort === 1"  class="customSortDownLabel"><md-icon class="md-icon-small">arrow_upward</md-icon></span>
+		<div class="ag-custom-header" style="display: flex; flex: 1; align-items: center;">
+			<div style="display: flex; flex: 1; align-items:center;">
+				<span @click="onSortRequested('asc', $event)" class="customHeaderLabel">{{params.displayName}}</span>
+				<span v-if="params.enableSorting && sort === 1" class="customSortDownLabel"><md-icon class="md-icon-small">arrow_upward</md-icon></span>
 				<span v-if="params.enableSorting && sort === 2" class="customSortUpLabel"><md-icon class="md-icon-small">arrow_downward</md-icon></span>
 			</div>
 
 			<div>
-				<button class="" @click="moveLeft()" :disabled="leftDisabled">&lt;</button>
-				<button class="" @click="moveRight()" :disabled="rightDisabled">&gt;</button>
+				<span class="" @click="moveLeft()" :disabled="leftDisabled"><md-icon style="font-size: 14px !important;">keyboard_arrow_left</md-icon></span>
+				<span class="" @click="moveRight()" :disabled="rightDisabled"><md-icon style="font-size: 14px !important;">keyboard_arrow_right</md-icon></span>
 			</div>
     </div>
   `,
