@@ -42,7 +42,7 @@
         </md-button>
       </div>
     </div>
-    <GridComponent v-if="element.tableOpen"></GridComponent>
+    <GridComponent :element="element" v-if="element.tableOpen"></GridComponent>
   </div>
 </template>
 
