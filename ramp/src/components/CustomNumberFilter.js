@@ -17,8 +17,8 @@ export default Vue.extend({
 	`,
 	data: function() {
 		return {
-			minVal: '',
-			maxVal: '',
+			minVal: 0,
+			maxVal: 0,
 		};
 	},
 	beforeMount() {
@@ -27,77 +27,55 @@ export default Vue.extend({
 	},
 	methods: {
 		minValChanged(event) {
-			this.minVal = Number(event.target.value);
+			const newMinValue = event.target.value;
+			this.minVal = newMinValue !== '' ? Number(event.target.value) : '';
 			let that = this;
-			if (this.minVal !== '' || this.maxVal !== '') {
-				this.params.parentFilterInstance(function(instance) {
-					if (that.minVal === '') {
-						instance.setModel({
-							filterType: 'number',
-							type: 'lessThanOrEqual',
-							filter: null,
-							filterTo: that.maxVal,
-						});
-					} else if (that.maxVal === '') {
-						instance.setModel({
-							filterType: 'number',
-							type: 'greaterThanOrEqual',
-							filter: that.minVal,
-							filterTo: null,
-						});
-					} else {
-						instance.setModel({
-							filterType: 'number',
-							type: 'inRange',
-							filter: that.minVal,
-							filterTo: that.maxVal,
-						});
-					}
-					instance.onFilterChanged();
-				});
-			}
-			if (this.minVal === '' && this.maxVal === '') {
-				this.params.parentFilterInstance(function(instance) {
-					instance.setModel(null);
-				});
-			}
+			this.params.parentFilterInstance(function(instance) {
+				that.setFilterModel(instance);
+			});
 		},
 		maxValChanged(event) {
-			this.maxVal = Number(event.target.value);
+			const newMaxValue = event.target.value;
+			this.maxVal = newMaxValue !== '' ? Number(event.target.value) : '';
 			let that = this;
-			if (this.minVal !== '' || this.maxVal !== '') {
-				this.params.parentFilterInstance(function(instance) {
-					if (that.minVal === '') {
-						instance.setModel({
-							filterType: 'number',
-							type: 'lessThanOrEqual',
-							filter: that.maxVal,
-							filterTo: null,
-						});
-					} else if (that.maxVal === '') {
-						instance.setModel({
-							filterType: 'number',
-							type: 'greaterThanOrEqual',
-							filter: that.minVal,
-							filterTo: null,
-						});
-					} else {
-						instance.setModel({
-							filterType: 'number',
-							type: 'inRange',
-							filter: that.minVal,
-							filterTo: that.maxVal,
-						});
-					}
-					instance.onFilterChanged();
+			this.params.parentFilterInstance(function(instance) {
+				that.setFilterModel(instance);
+			});
+		},
+		setFilterModel(instance) {
+			let that = this;
+			if (that.maxVal !== '' && that.minVal !== '') {
+				instance.setModel({
+					filterType: 'number',
+					type: 'inRange',
+					filter: that.minVal,
+					filterTo: that.maxVal,
+				});
+			} else if (that.minVal === '') {
+				instance.setModel({
+					filterType: 'number',
+					type: 'lessThanOrEqual',
+					filter: that.maxVal,
+					filterTo: null,
+				});
+			} else if (that.maxVal === '') {
+				instance.setModel({
+					filterType: 'number',
+					type: 'greaterThanOrEqual',
+					filter: that.minVal,
+					filterTo: null,
+				});
+			// temp solution to act as clear filters
+			} else {
+				instance.setModel({
+					filterType: 'number',
+					type: 'inRange',
+					filter: -Number.MAX_SAFE_INTEGER,
+					filterTo: Number.MAX_SAFE_INTEGER,
 				});
 			}
-			if (this.minVal === '' && this.maxVal === '') {
-				this.params.parentFilterInstance(function(instance) {
-					instance.setModel(null);
-				});
-			}
-		}
+			instance.onFilterChanged();
+		},
 	},
 	onParentModelChanged(parentModel) {
 		this.minVal = !parentModel ? -Infinity : parentModel.filter;
