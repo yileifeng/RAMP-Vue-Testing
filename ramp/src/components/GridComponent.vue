@@ -1,5 +1,5 @@
 <template>
-	<div class="grid-container">
+	<div class="grid-container" :style="{ height: containerHeight }">
 		<div class="rv-header">
 			<div class="rv-header-content">
 				<h3 class="rv-title">{{ element.name }}</h3>
@@ -31,7 +31,7 @@
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">refresh</md-icon>
 			</md-button>
 			<md-menu
-				style="z-index: 10;"
+				style="z-index: 9;"
 				md-size="huge"
 				:md-offset-x="-280"
 				:md-offset-y="-30"
@@ -50,15 +50,64 @@
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>
-			<md-button id="icon" class="md-icon-button md-primary md-flat">
-				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">more_vert</md-icon>
-			</md-button>
+
+			<md-menu
+				style="z-index: 10;"
+				md-size="huge"
+				:md-offset-x="-280"
+				:md-offset-y="-30"
+				:md-close-on-click="false"
+				:md-close-on-select="false"
+			>
+				<md-button id="icon" class="md-icon-button md-primary md-flat" md-menu-trigger>
+					<md-icon class="md-icon-small">more_vert</md-icon>
+				</md-button>
+
+				<md-menu-content>
+					<md-menu-item v-on:click="fullscreen = false; getGridHeight();">
+						Split View
+						<md-icon class="md-icon-small" v-if="!fullscreen">check</md-icon>
+						<md-icon class="md-icon-small" v-else></md-icon>
+					</md-menu-item>
+					<md-menu-item v-on:click="fullscreen = true; getGridHeight();">
+						Maximize
+						<md-icon class="md-icon-small" v-if="fullscreen">check</md-icon>
+						<md-icon class="md-icon-small" v-else></md-icon>
+					</md-menu-item>
+					<div class="rv-separator"></div>
+					<md-menu-item v-on:click="filterByExtent = !filterByExtent">
+						<span>
+							<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="filter"><path d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "></path></g></svg></md-icon>
+							Filter by extent
+						</span>
+						<md-icon class="md-icon-small" v-if="filterByExtent">check</md-icon>
+						<md-icon class="md-icon-small" v-else></md-icon>
+					</md-menu-item>
+					<md-menu-item v-on:click="showFilters = !showFilters">
+						<span>
+							<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="filter"><path d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "></path></g></svg></md-icon>
+							Show filters
+						</span>
+						<md-icon class="md-icon-small" v-if="showFilters">check</md-icon>
+						<md-icon class="md-icon-small" v-else></md-icon>
+					</md-menu-item>
+					<div class="rv-separator"></div>
+					<md-menu-item>
+						<span>
+							<md-icon class="md-icon-small">insert_drive_file</md-icon>
+							Export
+						</span>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+
 			<md-button id="icon" class="md-icon-button md-primary md-flat" @click="element.tableOpen = false">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">close</md-icon>
 			</md-button>
 		</div>
 		<ag-grid-vue
 			class="ag-grid-test ag-theme-material"
+			:style="{ height: gridHeight }"
 			:gridOptions="gridOptions"
 			:columnDefs="columnDefs"
 			:rowData="rowData"
@@ -86,7 +135,12 @@ export default {
 			columnDefs: null,
 			rowData: null,
 			modules: AllCommunityModules,
-			quicksearch: null
+			quicksearch: null,
+			fullscreen: false,
+			gridHeight: null,
+			containerHeight: null,
+			filterByExtent: false,
+			showFilters: true
 		};
 	},
 	components: {
@@ -159,6 +213,8 @@ export default {
 		onGridReady(params) {
 			this.gridApi = params.api;
 			this.columnApi = params.columnApi;
+
+			this.getGridHeight();
 		},
 		updateQuickSearch() {
 			this.gridApi.setQuickFilter(this.quicksearch);
@@ -170,6 +226,15 @@ export default {
 			colDef.floatingFilterComponentParams = {
 				suppressFilterButton: true
 			};
+		},
+		getGridHeight() {
+			if(this.fullscreen) {
+				this.gridHeight = 'calc(98vh - 49px)'
+				this.containerHeight = '98vh !important'
+			} else {
+				this.gridHeight = 'calc(50vh - 49px)'
+				this.containerHeight = '50vh !important';
+			}
 		},
 		/** Sets up text floating filter accounting for static types, default values and selector types */
 		// setUpTextFilter(colDef, lazyFilterEnabled) {
@@ -232,14 +297,13 @@ export default {
 	position: absolute;
 	margin-left: 375px;
 	width: calc(100% - 22vw) !important;
-	height: 50vh !important;
 	bottom: 500px;
 	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
 		0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 	top: 0px;
 }
 .ag-grid-test {
-	height: calc(50vh - 49px);
+	height:
 }
 .rv-header {
 	display: flex;
@@ -307,8 +371,15 @@ export default {
 }
 .md-list-item-content {
 	font-size: 14px;
+	color: rgba(0,0,0,.84);
 }
 .md-list-item-content > .md-icon {
 	font-size: 22px !important;
+}
+.rv-separator {
+	background: #ddd;
+	height: 1px;
+	width: 100%;
+	margin: 5px 0px 5px 0px;
 }
 </style>
