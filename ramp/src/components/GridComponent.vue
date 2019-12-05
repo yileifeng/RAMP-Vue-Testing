@@ -21,18 +21,35 @@
 					style=""
 				/>
 				<md-icon v-if="!quicksearch">search</md-icon>
-				<span v-if="quicksearch" v-on:click="quicksearch=null;updateQuickSearch()"><md-icon>close</md-icon></span>
+				<span v-if="quicksearch" v-on:click="quicksearch = null;updateQuickSearch();"><md-icon>close</md-icon></span>
 			</div>
 			<span class="rv-button-divider"></span>
 			<md-button id="icon" class="md-icon-button md-primary md-flat md-button-disabled" :disabled="true">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">filter_list</md-icon>
 			</md-button>
 			<md-button id="icon" class="md-icon-button md-primary md-flat">
-				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">format_list_bulleted</md-icon>
-			</md-button>
-			<md-button id="icon" class="md-icon-button md-primary md-flat">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">refresh</md-icon>
 			</md-button>
+			<md-menu
+				style="z-index: 10;"
+				md-size="huge"
+				:md-offset-x="-280"
+				:md-offset-y="-30"
+				:md-close-on-click="false"
+				:md-close-on-select="false"
+			>
+				<md-button id="icon" class="md-icon-button md-primary md-flat" md-menu-trigger>
+					<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="format-list-checks"><path d="M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z"></path></g></svg></md-icon>
+				</md-button>
+
+				<md-menu-content>
+					<md-menu-item v-for="item in columnDefs" :key="item.name" v-on:click="columnApi.setColumnVisible(item.field, item.hide); item.hide = !item.hide">
+						{{ item.headerName }}
+						<md-icon class="md-icon-small" v-if="!item.hide">check</md-icon>
+						<md-icon class="md-icon-small" v-else></md-icon>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
 			<md-button id="icon" class="md-icon-button md-primary md-flat">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">more_vert</md-icon>
 			</md-button>
@@ -73,7 +90,7 @@ export default {
 		};
 	},
 	components: {
-		AgGridVue,
+		AgGridVue
 	},
 	beforeMount() {
 		this.columnDefs = [
@@ -83,25 +100,29 @@ export default {
 				sortable: true,
 				lockPosition: true,
 				filter: 'agNumberColumnFilter',
-				filterParams: {}
+				filterParams: {},
+				hide: false
 			},
 			{
 				headerName: 'COUNTRY',
 				field: 'COUNTRY',
 				sortable: true,
-				lockPosition: true
+				lockPosition: true,
+				hide: false
 			},
 			{
 				headerName: 'NAME',
 				field: 'NAME',
 				sortable: true,
-				lockPosition: true
+				lockPosition: true,
+				hide: false
 			},
 			{
 				headerName: 'DATE',
 				field: 'DATE',
 				sortable: true,
-				lockPosition: true
+				lockPosition: true,
+				hide: false
 			},
 			{
 				headerName: 'LATITUDE',
@@ -109,7 +130,8 @@ export default {
 				sortable: true,
 				lockPosition: true,
 				filter: 'agNumberColumnFilter',
-				filterParams: {}
+				filterParams: {},
+				hide: false
 			},
 			{
 				headerName: 'LONGITUDE',
@@ -117,7 +139,8 @@ export default {
 				sortable: true,
 				lockPosition: true,
 				filter: 'agNumberColumnFilter',
-				filterParams: {}
+				filterParams: {},
+				hide: false
 			}
 		];
 		this.columnDefs.forEach(col => {
@@ -129,7 +152,7 @@ export default {
 
 		this.frameworkComponents = {
 			agColumnHeader: CustomHeader,
-			numberFloatingFilter: CustomNumberFilter,
+			numberFloatingFilter: CustomNumberFilter
 		};
 	},
 	methods: {
@@ -150,36 +173,57 @@ export default {
 		},
 		/** Sets up text floating filter accounting for static types, default values and selector types */
 		// setUpTextFilter(colDef, lazyFilterEnabled) {
-			// default to regex filtering for text columns
-			// if (!lazyFilterEnabled) {
-			// colDef.filterParams.textCustomComparator = function (value, filterText) {
-			//     const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
-			//     return re.test(value);
-			// }
-			// } else {
-			// colDef.filterParams.textCustomComparator = function (value, filterText) {
-			//     // treat * as a regular special char with lazy filter on
-			//     const newFilterText = filterText.replace(/\*/, '\\*');
-			//     // surround filter text with .* to match anything before and after
-			// 	const re = new RegExp(`^.*${newFilterText}.*`);
-			//     return re.test(value);
-			// }
-			// }
+		// default to regex filtering for text columns
+		// if (!lazyFilterEnabled) {
+		// colDef.filterParams.textCustomComparator = function (value, filterText) {
+		//     const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
+		//     return re.test(value);
+		// }
+		// } else {
+		// colDef.filterParams.textCustomComparator = function (value, filterText) {
+		//     // treat * as a regular special char with lazy filter on
+		//     const newFilterText = filterText.replace(/\*/, '\\*');
+		//     // surround filter text with .* to match anything before and after
+		// 	const re = new RegExp(`^.*${newFilterText}.*`);
+		//     return re.test(value);
+		// }
+		// }
 		// },
 		createRowData() {
 			return [
-				{ OBJECTID: 1, COUNTRY: 'Mexico', NAME: 'Cornwall Pipeline', DATE: '01/01/2020', LATITUDE: 129.17, LONGITUDE: -115.25 },
-				{ OBJECTID: 2, COUNTRY: 'Canada', NAME: 'Mainline', DATE: '12/25/2019', LATITUDE: 132.38, LONGITUDE: -118.72 },
-				{ OBJECTID: 3, COUNTRY: 'United States', NAME: 'Bluewater Pipeline Co', DATE: '11/29/2019', LATITUDE: 0, LONGITUDE: 0 },
+				{
+					OBJECTID: 1,
+					COUNTRY: 'Mexico',
+					NAME: 'Cornwall Pipeline',
+					DATE: '01/01/2020',
+					LATITUDE: 129.17,
+					LONGITUDE: -115.25
+				},
+				{
+					OBJECTID: 2,
+					COUNTRY: 'Canada',
+					NAME: 'Mainline',
+					DATE: '12/25/2019',
+					LATITUDE: 132.38,
+					LONGITUDE: -118.72
+				},
+				{
+					OBJECTID: 3,
+					COUNTRY: 'United States',
+					NAME: 'Bluewater Pipeline Co',
+					DATE: '11/29/2019',
+					LATITUDE: 0,
+					LONGITUDE: 0
+				}
 			];
 		}
 	},
 	created() {
 		this.gridOptions = {
 			enableFilter: true,
-			floatingFilter: true,
+			floatingFilter: true
 		};
-	},
+	}
 };
 </script>
 
@@ -257,5 +301,14 @@ export default {
 }
 .md-button-disabled {
 	color: rgba(0, 0, 0, 0.38);
+}
+.md-menu-content {
+	background: #fff;
+}
+.md-list-item-content {
+	font-size: 14px;
+}
+.md-list-item-content > .md-icon {
+	font-size: 22px !important;
 }
 </style>
