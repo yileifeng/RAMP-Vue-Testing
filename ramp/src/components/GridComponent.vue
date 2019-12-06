@@ -24,6 +24,11 @@
 				<span v-if="quicksearch" v-on:click="quicksearch = null;updateQuickSearch();"><md-icon>close</md-icon></span>
 			</div>
 			<span class="rv-button-divider"></span>
+			<md-button id="lazy-filter" class="md-icon-button md-primary md-flat" v-on:click="toggleLazyFilters">
+				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">weekend</md-icon>
+			</md-button>
+			<md-icon class="md-icon-small" v-if="lazyFilterEnabled" style="width: 20px; height: 20px; margin-right: 15px;">check_box</md-icon>
+			<md-icon class="md-icon-small" style="width: 20px; height: 20px; margin-right: 15px;" v-else>check_box_outline_blank</md-icon>
 			<md-button id="icon" class="md-icon-button md-primary md-flat md-button-disabled" :disabled="true">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">filter_list</md-icon>
 			</md-button>
@@ -125,6 +130,7 @@ import '@ag-grid-community/all-modules/dist/styles/ag-theme-material.css';
 import { AgGridVue } from '@ag-grid-community/vue';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 import CustomNumberFilter from './CustomNumberFilter';
+import CustomTextFilter from './CustomTextFilter';
 import CustomHeader from './CustomHeader';
 
 export default {
@@ -140,7 +146,8 @@ export default {
 			gridHeight: null,
 			containerHeight: null,
 			filterByExtent: false,
-			showFilters: true
+			showFilters: true,
+			lazyFilterEnabled: false
 		};
 	},
 	components: {
@@ -162,21 +169,27 @@ export default {
 				field: 'COUNTRY',
 				sortable: true,
 				lockPosition: true,
-				hide: false
+				hide: false,
+				filter: 'agTextColumnFilter',
+				filterParams: {}
 			},
 			{
 				headerName: 'NAME',
 				field: 'NAME',
 				sortable: true,
 				lockPosition: true,
-				hide: false
+				hide: false,
+				filter: 'agTextColumnFilter',
+				filterParams: {}
 			},
 			{
 				headerName: 'DATE',
 				field: 'DATE',
 				sortable: true,
 				lockPosition: true,
-				hide: false
+				hide: false,
+				filter: 'agTextColumnFilter',
+				filterParams: {}
 			},
 			{
 				headerName: 'LATITUDE',
@@ -199,14 +212,20 @@ export default {
 		];
 		this.columnDefs.forEach(col => {
 			if (col.filter === 'agNumberColumnFilter') {
-				this.setUpNumberFilter(col, true);
+				this.setUpNumberFilter(col);
+			} else if (col.filter === 'agTextColumnFilter') {
+				// TODO: selector filter
+				this.setUpTextFilter(col, false);
+			} else if (col.filter === 'agDateColumnFilter') {
+				// TODO
 			}
 		});
 		this.rowData = this.createRowData();
 
 		this.frameworkComponents = {
 			agColumnHeader: CustomHeader,
-			numberFloatingFilter: CustomNumberFilter
+			numberFloatingFilter: CustomNumberFilter,
+			textFloatingFilter: CustomTextFilter
 		};
 	},
 	methods: {
@@ -219,13 +238,75 @@ export default {
 		updateQuickSearch() {
 			this.gridApi.setQuickFilter(this.quicksearch);
 		},
-		/** Sets up number floating filter accounting for static types and default values */
-		setUpNumberFilter(colDef, lazyFilterEnabled) {
+		toggleLazyFilters() {
+			// problem: after applying filters to column on a lazy filters, toggling filters mode does not change the previously filtered column settings
+			// changing search filter mode
+			this.lazyFilterEnabled = !this.lazyFilterEnabled;
+			this.columnDefs.forEach(col => {
+				if (col.filter === 'agTextColumnFilter') {
+					this.setUpTextFilter(col, this.lazyFilterEnabled);
+				}
+			});
+			// reset column state
+			this.columnApi.resetColumnState();
+			// clear all active filters
+			this.gridApi.setFilterModel(null);
+			this.gridApi.onFilterChanged();
+		},
+		setUpNumberFilter(colDef) {
 			colDef.floatingFilterComponent = 'numberFloatingFilter';
 			colDef.filterParams.inRangeInclusive = true;
 			colDef.floatingFilterComponentParams = {
-				suppressFilterButton: true
+				suppressFilterButton: true,
 			};
+		},
+		setUpTextFilter(colDef, lazyFilterEnabled) {
+			colDef.floatingFilterComponent = 'textFloatingFilter';
+			colDef.floatingFilterComponentParams = {
+				suppressFilterButton: true,
+			};
+			// default to regex filtering for text columns
+			if (!lazyFilterEnabled) {
+				colDef.filterParams.textCustomComparator = function(filter, gridValue, filterText) {
+					console.log("non lazy");
+					const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
+					return re.test(gridValue);
+				};
+			} else {
+				colDef.filterParams.textCustomComparator = function(filter, gridValue, filterText) {
+					console.log('lazy');
+					// treat * as a regular special char with lazy filter on
+					const newFilterText = filterText.replace(/\*/, '\\*');
+					// surround filter text with .* to match anything before and after
+					const re = new RegExp(`^.*${newFilterText}.*`);
+					return re.test(gridValue);
+				};
+			}
+
+			// modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
+			let disregardAccents = function (s) {
+				if (isNaN(s)) {
+					// check if s is a number before trying to convert it to lowercase (otherwise throws error)
+					let r = s.toLowerCase();
+					r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+					r = r.replace(new RegExp("æ", 'g'), "ae");
+					r = r.replace(new RegExp("ç", 'g'), "c");
+					r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+					r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+					r = r.replace(new RegExp("ñ", 'g'), "n");
+					r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
+					r = r.replace(new RegExp("œ", 'g'), "oe");
+					r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+					r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+					return r;
+				}
+				return s;
+			}
+
+			// for individual columns
+			colDef.filterParams.textFormatter = function (s) {
+				return disregardAccents(s);
+			}
 		},
 		getGridHeight() {
 			if(this.fullscreen) {
@@ -236,24 +317,6 @@ export default {
 				this.containerHeight = '50vh !important';
 			}
 		},
-		/** Sets up text floating filter accounting for static types, default values and selector types */
-		// setUpTextFilter(colDef, lazyFilterEnabled) {
-		// default to regex filtering for text columns
-		// if (!lazyFilterEnabled) {
-		// colDef.filterParams.textCustomComparator = function (value, filterText) {
-		//     const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
-		//     return re.test(value);
-		// }
-		// } else {
-		// colDef.filterParams.textCustomComparator = function (value, filterText) {
-		//     // treat * as a regular special char with lazy filter on
-		//     const newFilterText = filterText.replace(/\*/, '\\*');
-		//     // surround filter text with .* to match anything before and after
-		// 	const re = new RegExp(`^.*${newFilterText}.*`);
-		//     return re.test(value);
-		// }
-		// }
-		// },
 		createRowData() {
 			return [
 				{
@@ -281,7 +344,7 @@ export default {
 					LONGITUDE: 0
 				}
 			];
-		}
+		},
 	},
 	created() {
 		this.gridOptions = {

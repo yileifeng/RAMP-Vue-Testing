@@ -4,12 +4,12 @@ export default Vue.extend({
 	template: `
 		<div>
 			<input class="rv-min"
-				style="width:45%; opacity: 0.4"
+				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				:value="minVal"
 				@change="minValChanged($event)"/>
 			<input class="rv-max"
-				style="width:45%; opacity: 0.4"
+				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				:value="maxVal"
 				@change="maxValChanged($event)"/>
@@ -27,16 +27,16 @@ export default Vue.extend({
 	},
 	methods: {
 		minValChanged(event) {
-			const newMinValue = event.target.value;
-			this.minVal = newMinValue !== '' ? Number(event.target.value) : '';
+			const newMinValue = event.target.value !== '' ? Number(event.target.value) : event.target.value;
+			this.minVal = newMinValue !== '' && !isNaN(newMinValue) ? newMinValue : '';
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
 			});
 		},
 		maxValChanged(event) {
-			const newMaxValue = event.target.value;
-			this.maxVal = newMaxValue !== '' ? Number(event.target.value) : '';
+			const newMaxValue = event.target.value !== '' ? Number(event.target.value) : event.target.value;
+			this.maxVal = newMaxValue !== '' && !isNaN(newMaxValue) ? newMaxValue : '';
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
@@ -67,12 +67,7 @@ export default Vue.extend({
 				});
 			// temp solution to act as clear filters
 			} else {
-				instance.setModel({
-					filterType: 'number',
-					type: 'inRange',
-					filter: -Number.MAX_SAFE_INTEGER,
-					filterTo: Number.MAX_SAFE_INTEGER,
-				});
+				instance.setModel(null);
 			}
 			instance.onFilterChanged();
 		},
