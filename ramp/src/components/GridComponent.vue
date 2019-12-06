@@ -83,7 +83,7 @@
 						<md-icon class="md-icon-small" v-if="filterByExtent">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
 					</md-menu-item>
-					<md-menu-item v-on:click="showFilters = !showFilters">
+					<md-menu-item v-on:click="showFilters = !showFilters; gridOptions.floatingFilter = !gridOptions.floatingFilter; gridOptions.api.refreshHeader()">
 						<span>
 							<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="filter"><path d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "></path></g></svg></md-icon>
 							Show filters
