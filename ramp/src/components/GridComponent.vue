@@ -29,7 +29,7 @@
 			</md-button>
 			<md-icon class="md-icon-small" v-if="lazyFilterEnabled" style="width: 20px; height: 20px; margin-right: 15px;">check_box</md-icon>
 			<md-icon class="md-icon-small" style="width: 20px; height: 20px; margin-right: 15px;" v-else>check_box_outline_blank</md-icon>
-			<md-button id="icon" class="md-icon-button md-primary md-flat md-button-disabled" :disabled="true">
+			<md-button id="icon" class="md-icon-button md-primary md-flat" @click="clearColumnFilters()">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">filter_list</md-icon>
 			</md-button>
 			<md-button id="icon" class="md-icon-button md-primary md-flat">
@@ -171,7 +171,8 @@ export default {
 				lockPosition: true,
 				hide: false,
 				filter: 'agTextColumnFilter',
-				filterParams: {}
+				filterParams: {},
+				width: 300
 			},
 			{
 				headerName: 'NAME',
@@ -180,7 +181,8 @@ export default {
 				lockPosition: true,
 				hide: false,
 				filter: 'agTextColumnFilter',
-				filterParams: {}
+				filterParams: {},
+				width: 400
 			},
 			{
 				headerName: 'DATE',
@@ -316,6 +318,13 @@ export default {
 				this.gridHeight = 'calc(50vh - 49px)'
 				this.containerHeight = '50vh !important';
 			}
+		},
+		clearColumnFilters() {
+			this.gridApi.setQuickFilter(null);
+			this.quicksearch = null;
+
+			this.gridOptions.api.setFilterModel({});
+			this.gridApi.refreshHeader();
 		},
 		createRowData() {
 			return [
