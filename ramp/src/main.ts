@@ -71,14 +71,16 @@ root.addChild(child3);
 
 const store = new Vuex.Store({
   state: {
-    legendComponents: root
+    legendComponents: root,
+    openTable: null
   },
   getters: {
     getEntries: state => state.legendComponents,
     getAllToggled: state => state.legendComponents.allToggled,
     getAllUntoggled: state => state.legendComponents.allUntoggled,
     getAllExpanded: state => state.legendComponents.allExpanded,
-    getAllCollapsed: state => state.legendComponents.allCollapsed
+    getAllCollapsed: state => state.legendComponents.allCollapsed,
+    getOpenTable: state => state.openTable
   },
   mutations: {
     ADD_ENTRY(state, payload) {
@@ -91,6 +93,9 @@ const store = new Vuex.Store({
     },
     UPDATE_HEADER_OPTIONS (state, option) {
       state.legendComponents.updateHeaderOption(option);
+    },
+    SET_OPEN_TABLE (state, table) {
+      state.openTable = table;
     }
   },
   actions: {

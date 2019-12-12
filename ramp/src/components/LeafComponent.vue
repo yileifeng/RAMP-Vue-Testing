@@ -72,8 +72,14 @@ export default {
       }
     },
     openTable: function() {
-      // *** find a way to prevent multiple table panels open at once
+      let currentTable = this.$store.getters.getOpenTable;
+
+      if(currentTable != null && currentTable !== this.element) {
+        currentTable.tableOpen = false;
+      }
+
       this.element.tableOpen = !this.element.tableOpen;
+      this.$store.commit('SET_OPEN_TABLE', this.element);
     },
     remove: function() {
       let node = this.element.parent.children.findIndex(c => c === this.element);

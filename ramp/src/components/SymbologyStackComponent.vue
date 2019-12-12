@@ -1,14 +1,14 @@
 <template>
-  <div class="rvDropdown">
-    <div class="rvDropdownTitle noselect" v-on:click="click">
+  <div class="rvDropdown" v-on:click="openTable">
+    <div class="rvDropdownTitle noselect">
       <!-- icon -->
       <md-button id="icon" class="md-icon-button md-primary md-flat" v-if="element.expanded">
         <md-icon class="md-icon-small" style="width: 20px; height: 20px;">clear</md-icon>
       </md-button>
-      <SymbologyStackIcon :stack="element.symbologyStack" v-else></SymbologyStackIcon>
+      <SymbologyStackIcon  v-on:click="click" :stack="element.symbologyStack" v-else></SymbologyStackIcon>
 
       <!-- name -->
-      <span v-on:click="openTable">{{ element.name }}</span>
+      <span>{{ element.name }}</span>
 
       <!-- icon -->
       <div v-if="element.toggleable">
@@ -76,8 +76,14 @@ export default {
       }
     },
     openTable: function() {
-      // *** find a way to prevent multiple table panels open at once
+      let currentTable = this.$store.getters.getOpenTable;
+
+      if(currentTable != null && currentTable !== this.element) {
+        currentTable.tableOpen = false;
+      }
+
       this.element.tableOpen = !this.element.tableOpen;
+      this.$store.commit('SET_OPEN_TABLE', this.element);
     }
   }
 }
