@@ -7,7 +7,7 @@ export default Vue.extend({
 				style="width: 90%; line-height: 56px; padding-left: 12px; padding-right: 12px; background-color: #fafafa; border: 1px solid #607d8b; outline: initial"
 				@change="valueChanged($event)"
 				type="text"
-				:value="filterValue"/>
+				v-model="filterValue"/>
 		</div>
 	`,
 	data: function() {
