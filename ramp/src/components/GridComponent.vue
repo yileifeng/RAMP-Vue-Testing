@@ -21,16 +21,30 @@
 					style=""
 				/>
 				<md-icon v-if="!quicksearch">search</md-icon>
-				<span v-if="quicksearch" v-on:click="quicksearch = null;updateQuickSearch();"><md-icon>close</md-icon></span>
+				<span
+					v-if="quicksearch"
+					v-on:click="
+						quicksearch = null;
+						updateQuickSearch();
+					"
+					><md-icon>close</md-icon></span
+				>
 			</div>
 			<span class="rv-button-divider"></span>
-			<md-button id="lazy-filter" class="md-icon-button md-primary md-flat" v-on:click="toggleLazyFilters">
+			<!-- <md-button id="lazy-filter" class="md-icon-button md-primary md-flat" v-on:click="toggleLazyFilters">
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">weekend</md-icon>
 			</md-button>
-			<md-icon class="md-icon-small" v-if="lazyFilterEnabled" style="width: 20px; height: 20px; margin-right: 15px;">check_box</md-icon>
-			<md-icon class="md-icon-small" style="width: 20px; height: 20px; margin-right: 15px;" v-else>check_box_outline_blank</md-icon>
-			<md-button id="icon" class="md-icon-button md-primary md-flat" @click="clearColumnFilters()">
-				<md-icon class="md-icon-small" style="width: 24px; height: 24px;"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="filter-remove_cache224"><path d="M 14.7574,20.8284L 17.6036,17.9822L 14.7574,15.1716L 16.1716,13.7574L 19.0178,16.568L 21.8284,13.7574L 23.2426,15.1716L 20.432,17.9822L 23.2426,20.8284L 21.8284,22.2426L 19.0178,19.3964L 16.1716,22.2426L 14.7574,20.8284 Z M 2,2L 19.9888,2.00001L 20,2.00001L 20,2.01122L 20,3.99999L 19.9207,3.99999L 13,10.9207L 13,22.909L 8.99999,18.909L 8.99999,10.906L 2.09405,3.99999L 2,3.99999L 2,2 Z "></path></g></svg></md-icon>
+			<md-icon
+				class="md-icon-small"
+				v-if="lazyFilterEnabled"
+				style="width: 20px; height: 20px; margin-right: 15px;"
+				>check_box</md-icon
+			>
+			<md-icon class="md-icon-small" style="width: 20px; height: 20px; margin-right: 15px;" v-else
+				>check_box_outline_blank</md-icon
+			> -->
+			<md-button id="icon" class="md-icon-button md-primary md-flat md-button-disabled" :disabled="true">
+				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">filter_list</md-icon>
 			</md-button>
 			<md-button id="icon" class="md-icon-button md-primary md-flat">
 				<md-icon class="md-icon-small" style="width: 24px; height: 24px;"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="map-refresh"><path d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"></path></g></svg></md-icon>
@@ -44,11 +58,33 @@
 				:md-close-on-select="false"
 			>
 				<md-button id="icon" class="md-icon-button md-primary md-flat" md-menu-trigger>
-					<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="format-list-checks"><path d="M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z"></path></g></svg></md-icon>
+					<md-icon class="md-icon-small"
+						><svg
+							xmlns="http://www.w3.org/2000/svg"
+							fit=""
+							height="100%"
+							width="100%"
+							preserveAspectRatio="xMidYMid meet"
+							viewBox="0 0 24 24"
+							focusable="false"
+						>
+							<g id="format-list-checks">
+								<path
+									d="M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z"
+								></path>
+							</g></svg
+					></md-icon>
 				</md-button>
 
 				<md-menu-content>
-					<md-menu-item v-for="item in columnDefs" :key="item.name" v-on:click="columnApi.setColumnVisible(item.field, item.hide); item.hide = !item.hide">
+					<md-menu-item
+						v-for="item in columnDefs"
+						:key="item.name"
+						v-on:click="
+							columnApi.setColumnVisible(item.field, item.hide);
+							item.hide = !item.hide;
+						"
+					>
 						{{ item.headerName }}
 						<md-icon class="md-icon-small" v-if="!item.hide">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
@@ -69,12 +105,22 @@
 				</md-button>
 
 				<md-menu-content>
-					<md-menu-item v-on:click="fullscreen = false; getGridHeight();">
+					<md-menu-item
+						v-on:click="
+							fullscreen = false;
+							getGridHeight();
+						"
+					>
 						Split View
 						<md-icon class="md-icon-small" v-if="!fullscreen">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
 					</md-menu-item>
-					<md-menu-item v-on:click="fullscreen = true; getGridHeight();">
+					<md-menu-item
+						v-on:click="
+							fullscreen = true;
+							getGridHeight();
+						"
+					>
 						Maximize
 						<md-icon class="md-icon-small" v-if="fullscreen">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
@@ -82,15 +128,51 @@
 					<div class="rv-separator"></div>
 					<md-menu-item v-on:click="filterByExtent = !filterByExtent">
 						<span>
-							<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="filter"><path d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "></path></g></svg></md-icon>
+							<md-icon class="md-icon-small"
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									fit=""
+									height="100%"
+									width="100%"
+									preserveAspectRatio="xMidYMid meet"
+									viewBox="0 0 24 24"
+									focusable="false"
+								>
+									<g id="filter">
+										<path
+											d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
+										></path>
+									</g></svg
+							></md-icon>
 							Filter by extent
 						</span>
 						<md-icon class="md-icon-small" v-if="filterByExtent">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
 					</md-menu-item>
-					<md-menu-item v-on:click="showFilters = !showFilters; gridOptions.floatingFilter = !gridOptions.floatingFilter; gridOptions.api.refreshHeader()">
+					<md-menu-item
+						v-on:click="
+							showFilters = !showFilters;
+							gridOptions.floatingFilter = !gridOptions.floatingFilter;
+							gridOptions.api.refreshHeader();
+						"
+					>
 						<span>
-							<md-icon class="md-icon-small"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="filter"><path d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "></path></g></svg></md-icon>
+							<md-icon class="md-icon-small"
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									fit=""
+									height="100%"
+									width="100%"
+									preserveAspectRatio="xMidYMid meet"
+									viewBox="0 0 24 24"
+									focusable="false"
+								>
+									<g id="filter">
+										<path
+											d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
+										></path>
+									</g></svg
+							></md-icon>
 							Show filters
 						</span>
 						<md-icon class="md-icon-small" v-if="showFilters">check</md-icon>
@@ -131,6 +213,7 @@ import { AgGridVue } from '@ag-grid-community/vue';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 import CustomNumberFilter from './CustomNumberFilter';
 import CustomTextFilter from './CustomTextFilter';
+import CustomDateFilter from './CustomDateFilter';
 import CustomHeader from './CustomHeader';
 
 export default {
@@ -147,7 +230,7 @@ export default {
 			containerHeight: null,
 			filterByExtent: false,
 			showFilters: true,
-			lazyFilterEnabled: false
+			lazyFilterEnabled: true // default mode set lazyFilters to true
 		};
 	},
 	components: {
@@ -187,10 +270,11 @@ export default {
 			{
 				headerName: 'DATE',
 				field: 'DATE',
+				width: 380,
 				sortable: true,
 				lockPosition: true,
 				hide: false,
-				filter: 'agTextColumnFilter',
+				filter: 'agDateColumnFilter',
 				filterParams: {}
 			},
 			{
@@ -219,7 +303,7 @@ export default {
 				// TODO: selector filter
 				this.setUpTextFilter(col, false);
 			} else if (col.filter === 'agDateColumnFilter') {
-				// TODO
+				this.setUpDateFilter(col);
 			}
 		});
 		this.rowData = this.createRowData();
@@ -227,7 +311,8 @@ export default {
 		this.frameworkComponents = {
 			agColumnHeader: CustomHeader,
 			numberFloatingFilter: CustomNumberFilter,
-			textFloatingFilter: CustomTextFilter
+			textFloatingFilter: CustomTextFilter,
+			dateFloatingFilter: CustomDateFilter
 		};
 	},
 	methods: {
@@ -270,13 +355,11 @@ export default {
 			// default to regex filtering for text columns
 			if (!lazyFilterEnabled) {
 				colDef.filterParams.textCustomComparator = function(filter, gridValue, filterText) {
-					console.log("non lazy");
 					const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
 					return re.test(gridValue);
 				};
 			} else {
 				colDef.filterParams.textCustomComparator = function(filter, gridValue, filterText) {
-					console.log('lazy');
 					// treat * as a regular special char with lazy filter on
 					const newFilterText = filterText.replace(/\*/, '\\*');
 					// surround filter text with .* to match anything before and after
@@ -286,36 +369,53 @@ export default {
 			}
 
 			// modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-			let disregardAccents = function (s) {
+			let disregardAccents = function(s) {
 				if (isNaN(s)) {
 					// check if s is a number before trying to convert it to lowercase (otherwise throws error)
 					let r = s.toLowerCase();
-					r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
-					r = r.replace(new RegExp("æ", 'g'), "ae");
-					r = r.replace(new RegExp("ç", 'g'), "c");
-					r = r.replace(new RegExp("[èéêë]", 'g'), "e");
-					r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
-					r = r.replace(new RegExp("ñ", 'g'), "n");
-					r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
-					r = r.replace(new RegExp("œ", 'g'), "oe");
-					r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
-					r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+					r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
+					r = r.replace(new RegExp('æ', 'g'), 'ae');
+					r = r.replace(new RegExp('ç', 'g'), 'c');
+					r = r.replace(new RegExp('[èéêë]', 'g'), 'e');
+					r = r.replace(new RegExp('[ìíîï]', 'g'), 'i');
+					r = r.replace(new RegExp('ñ', 'g'), 'n');
+					r = r.replace(new RegExp('[òóôõö]', 'g'), 'o');
+					r = r.replace(new RegExp('œ', 'g'), 'oe');
+					r = r.replace(new RegExp('[ùúûü]', 'g'), 'u');
+					r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
 					return r;
 				}
 				return s;
-			}
+			};
 
 			// for individual columns
-			colDef.filterParams.textFormatter = function (s) {
+			colDef.filterParams.textFormatter = function(s) {
 				return disregardAccents(s);
-			}
+			};
+		},
+		setUpDateFilter(colDef) {
+			colDef.floatingFilterComponent = 'dateFloatingFilter';
+			colDef.filterParams.inRangeInclusive = true;
+			colDef.filterParams.comparator = function(filterDate, entryDate) {
+				let entry = new Date(entryDate);
+				if (entry > filterDate) {
+					return 1;
+				} else if (entry < filterDate) {
+					return -1;
+				} else {
+					return 0;
+				}
+			};
+			colDef.floatingFilterComponentParams = {
+				suppressFilterButton: true,
+			};
 		},
 		getGridHeight() {
-			if(this.fullscreen) {
-				this.gridHeight = 'calc(98vh - 49px)'
-				this.containerHeight = '98vh !important'
+			if (this.fullscreen) {
+				this.gridHeight = 'calc(98vh - 49px)';
+				this.containerHeight = '98vh !important';
 			} else {
-				this.gridHeight = 'calc(50vh - 49px)'
+				this.gridHeight = 'calc(50vh - 49px)';
 				this.containerHeight = '50vh !important';
 			}
 		},
@@ -332,7 +432,7 @@ export default {
 					OBJECTID: 1,
 					COUNTRY: 'Mexico',
 					NAME: 'Cornwall Pipeline',
-					DATE: '01/01/2020',
+					DATE: '2020-01-02',
 					LATITUDE: 129.17,
 					LONGITUDE: -115.25
 				},
@@ -340,7 +440,7 @@ export default {
 					OBJECTID: 2,
 					COUNTRY: 'Canada',
 					NAME: 'Mainline',
-					DATE: '12/25/2019',
+					DATE: '2019-12-25',
 					LATITUDE: 132.38,
 					LONGITUDE: -118.72
 				},
@@ -348,7 +448,7 @@ export default {
 					OBJECTID: 3,
 					COUNTRY: 'United States',
 					NAME: 'Bluewater Pipeline Co',
-					DATE: '11/29/2019',
+					DATE: '2019-11-29',
 					LATITUDE: 0,
 					LONGITUDE: 0
 				}
@@ -358,9 +458,10 @@ export default {
 	created() {
 		this.gridOptions = {
 			enableFilter: true,
-			floatingFilter: true
+			floatingFilter: true,
+			suppressRowTransform: true
 		};
-	}
+	},
 };
 </script>
 
@@ -373,9 +474,6 @@ export default {
 	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
 		0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 	top: 0px;
-}
-.ag-grid-test {
-	height:
 }
 .rv-header {
 	display: flex;
@@ -438,12 +536,16 @@ export default {
 .md-button-disabled {
 	color: rgba(0, 0, 0, 0.38);
 }
+.md-datepicker-dialog {
+	position: relative;
+	z-index: 9999 !important;
+}
 .md-menu-content {
 	background: #fff;
 }
 .md-list-item-content {
 	font-size: 14px;
-	color: rgba(0,0,0,.84);
+	color: rgba(0, 0, 0, 0.84);
 }
 .md-list-item-content > .md-icon {
 	font-size: 22px !important;
