@@ -214,6 +214,7 @@ import { AllCommunityModules } from '@ag-grid-community/all-modules';
 import CustomNumberFilter from './CustomNumberFilter';
 import CustomTextFilter from './CustomTextFilter';
 import CustomDateFilter from './CustomDateFilter';
+import CustomSelectorFilter from './CustomSelectorFilter';
 import CustomHeader from './CustomHeader';
 
 export default {
@@ -254,6 +255,7 @@ export default {
 				lockPosition: true,
 				hide: false,
 				filter: 'agTextColumnFilter',
+				isSelector: true,
 				filterParams: {},
 				width: 300
 			},
@@ -300,8 +302,7 @@ export default {
 			if (col.filter === 'agNumberColumnFilter') {
 				this.setUpNumberFilter(col);
 			} else if (col.filter === 'agTextColumnFilter') {
-				// TODO: selector filter
-				this.setUpTextFilter(col, false);
+				!col.isSelector ? this.setUpTextFilter(col, this.lazyFilterEnabled) : this.setUpSelectorFilter(col);
 			} else if (col.filter === 'agDateColumnFilter') {
 				this.setUpDateFilter(col);
 			}
@@ -312,7 +313,8 @@ export default {
 			agColumnHeader: CustomHeader,
 			numberFloatingFilter: CustomNumberFilter,
 			textFloatingFilter: CustomTextFilter,
-			dateFloatingFilter: CustomDateFilter
+			dateFloatingFilter: CustomDateFilter,
+			selectorFloatingFilter: CustomSelectorFilter
 		};
 	},
 	methods: {
@@ -410,6 +412,15 @@ export default {
 				suppressFilterButton: true,
 			};
 		},
+		setUpSelectorFilter(colDef) {
+			colDef.floatingFilterComponent = 'selectorFloatingFilter';
+			colDef.floatingFilterComponentParams = {
+				suppressFilterButton: true,
+			};
+			colDef.filterParams.textCustomComparator = function(filter, gridValue, filterText) {
+				return filterText.includes(gridValue);
+			}
+		},
 		getGridHeight() {
 			if (this.fullscreen) {
 				this.gridHeight = 'calc(98vh - 49px)';
@@ -446,6 +457,22 @@ export default {
 				},
 				{
 					OBJECTID: 3,
+					COUNTRY: 'United States',
+					NAME: 'Southern California Gas Co',
+					DATE: '2005-05-02',
+					LATITUDE: 31.34,
+					LONGITUDE: -110.97
+				},
+				{
+					OBJECTID: 4,
+					COUNTRY: 'Canada',
+					NAME: 'Cornwall Pipeline',
+					DATE: '2020-01-15',
+					LATITUDE: 44.99,
+					LONGITUDE: -74.72
+				},
+				{
+					OBJECTID: 5,
 					COUNTRY: 'United States',
 					NAME: 'Bluewater Pipeline Co',
 					DATE: '2019-11-29',
@@ -541,8 +568,15 @@ export default {
 	z-index: 9999 !important;
 	background: #fff;
 }
+/* TODO: change md-select font to match other input fields */
+.md-select-value {
+	font: 400 13.3333px Arial;
+}
 .md-menu-content {
 	background: #fff;
+}
+.md-menu.md-select {
+	overflow: hidden;
 }
 .md-list-item-content {
 	font-size: 14px;

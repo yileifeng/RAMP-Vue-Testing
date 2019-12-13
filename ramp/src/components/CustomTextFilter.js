@@ -5,7 +5,7 @@ export default Vue.extend({
 		<div>
 			<input class='rv-input'
 				style="width: 90%; line-height: 56px; padding-left: 12px; padding-right: 12px; background-color: #fafafa; border: 1px solid #607d8b; outline: initial"
-				@change="valueChanged($event)"
+				@change="valueChanged()"
 				type="text"
 				v-model="filterValue"/>
 		</div>
@@ -20,8 +20,6 @@ export default Vue.extend({
 	},
 	methods: {
 		valueChanged(event) {
-			const newTextFilter = event.target.value;
-			this.filterValue = newTextFilter !== '' ? newTextFilter : '';
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				instance.setModel({

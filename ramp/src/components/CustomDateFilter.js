@@ -45,10 +45,14 @@ export default Vue.extend({
 	},
 	watch: {
 		minDate: function (newDate, oldDate) {
-			this.minDateChanged(newDate);
+			if (newDate !== oldDate) {
+				this.minDateChanged(newDate);
+			}
 		},
 		maxDate: function (newDate, oldDate) {
-			this.maxDateChanged(newDate);
+			if (newDate !== oldDate) {
+				this.maxDateChanged(newDate);
+			}
 		},
 	},
 	methods: {
