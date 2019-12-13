@@ -539,6 +539,7 @@ export default {
 .md-datepicker-dialog {
 	position: relative;
 	z-index: 9999 !important;
+	background: #fff;
 }
 .md-menu-content {
 	background: #fff;
