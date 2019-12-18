@@ -5,7 +5,7 @@
 				<h3 class="rv-title">{{ element.name }}</h3>
 
 				<!-- this is a hardcoded value temporarily for testing purposes -->
-				<span class="rv-record-count">1 - 6 of 6 entries shown</span>
+				<span class="rv-record-count">{{ filterStatus }}</span>
 			</div>
 			<span class="flex"></span>
 
@@ -47,7 +47,22 @@
 				<md-icon class="md-icon-small" style="width: 20px; height: 20px;">filter_list</md-icon>
 			</md-button>
 			<md-button id="icon" class="md-icon-button md-primary md-flat">
-				<md-icon class="md-icon-small" style="width: 24px; height: 24px;"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="map-refresh"><path d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"></path></g></svg></md-icon>
+				<md-icon class="md-icon-small" style="width: 24px; height: 24px;"
+					><svg
+						xmlns="http://www.w3.org/2000/svg"
+						fit=""
+						height="100%"
+						width="100%"
+						preserveAspectRatio="xMidYMid meet"
+						viewBox="0 0 24 24"
+						focusable="false"
+					>
+						<g id="map-refresh">
+							<path
+								d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
+							></path>
+						</g></svg
+				></md-icon>
 			</md-button>
 			<md-menu
 				style="z-index: 9;"
@@ -228,14 +243,20 @@ export default {
 			quicksearch: null,
 			fullscreen: false,
 			gridHeight: null,
+			filterInfo: {
+				firstRow: 0,
+				lastRow: 0,
+				visibleRows: 0,
+			},
+			filterStatus: '',
 			containerHeight: null,
 			filterByExtent: false,
 			showFilters: true,
-			lazyFilterEnabled: true // default mode set lazyFilters to true
+			lazyFilterEnabled: true, // default mode set lazyFilters to true
 		};
 	},
 	components: {
-		AgGridVue
+		AgGridVue,
 	},
 	beforeMount() {
 		this.columnDefs = [
@@ -246,7 +267,7 @@ export default {
 				lockPosition: true,
 				filter: 'agNumberColumnFilter',
 				filterParams: {},
-				hide: false
+				hide: false,
 			},
 			{
 				headerName: 'COUNTRY',
@@ -257,7 +278,7 @@ export default {
 				filter: 'agTextColumnFilter',
 				isSelector: true,
 				filterParams: {},
-				width: 300
+				width: 300,
 			},
 			{
 				headerName: 'NAME',
@@ -267,7 +288,7 @@ export default {
 				hide: false,
 				filter: 'agTextColumnFilter',
 				filterParams: {},
-				width: 400
+				width: 400,
 			},
 			{
 				headerName: 'DATE',
@@ -277,7 +298,7 @@ export default {
 				lockPosition: true,
 				hide: false,
 				filter: 'agDateColumnFilter',
-				filterParams: {}
+				filterParams: {},
 			},
 			{
 				headerName: 'LATITUDE',
@@ -286,7 +307,7 @@ export default {
 				lockPosition: true,
 				filter: 'agNumberColumnFilter',
 				filterParams: {},
-				hide: false
+				hide: false,
 			},
 			{
 				headerName: 'LONGITUDE',
@@ -295,9 +316,10 @@ export default {
 				lockPosition: true,
 				filter: 'agNumberColumnFilter',
 				filterParams: {},
-				hide: false
-			}
+				hide: false,
+			},
 		];
+		// set up column filterse
 		this.columnDefs.forEach(col => {
 			if (col.filter === 'agNumberColumnFilter') {
 				this.setUpNumberFilter(col);
@@ -307,26 +329,31 @@ export default {
 				this.setUpDateFilter(col);
 			}
 		});
+		// initialize row data
 		this.rowData = this.createRowData();
 
+		// imported separate components
 		this.frameworkComponents = {
 			agColumnHeader: CustomHeader,
 			numberFloatingFilter: CustomNumberFilter,
 			textFloatingFilter: CustomTextFilter,
 			dateFloatingFilter: CustomDateFilter,
-			selectorFloatingFilter: CustomSelectorFilter
+			selectorFloatingFilter: CustomSelectorFilter,
 		};
 	},
 	methods: {
 		onGridReady(params) {
 			this.gridApi = params.api;
 			this.columnApi = params.columnApi;
-
+			// should load row data here
 			this.getGridHeight();
+			// initialize filter info + status
+			this.updateFilterInfo();
 		},
 		updateQuickSearch() {
 			this.gridApi.setQuickFilter(this.quicksearch);
 		},
+		// unused atm since we want to have lazy filters as default filter mode
 		toggleLazyFilters() {
 			// problem: after applying filters to column on a lazy filters, toggling filters mode does not change the previously filtered column settings
 			// changing search filter mode
@@ -419,7 +446,21 @@ export default {
 			};
 			colDef.filterParams.textCustomComparator = function(filter, gridValue, filterText) {
 				return filterText.includes(gridValue);
+			};
+		},
+		updateFilterInfo() {
+			// update filter info
+			if (this.gridApi) {
+				this.filterInfo.firstRow = this.gridApi.getFirstDisplayedRow() + 1;
+				this.filterInfo.lastRow = this.gridApi.getLastDisplayedRow() + 1;
+				this.filterInfo.visibleRows = this.gridApi.getDisplayedRowCount();
+				this.updateFilterStatus();
 			}
+		},
+		updateFilterStatus() {
+			this.filterStatus = this.filterInfo.visibleRows !== this.rowData.length ?
+					`${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown (filtered from ${this.rowData.length} records)` :
+					`${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
 		},
 		getGridHeight() {
 			if (this.fullscreen) {
@@ -445,7 +486,7 @@ export default {
 					NAME: 'Cornwall Pipeline',
 					DATE: '2020-01-02',
 					LATITUDE: 129.17,
-					LONGITUDE: -115.25
+					LONGITUDE: -115.25,
 				},
 				{
 					OBJECTID: 2,
@@ -453,7 +494,7 @@ export default {
 					NAME: 'Mainline',
 					DATE: '2019-12-25',
 					LATITUDE: 132.38,
-					LONGITUDE: -118.72
+					LONGITUDE: -118.72,
 				},
 				{
 					OBJECTID: 3,
@@ -461,7 +502,7 @@ export default {
 					NAME: 'Southern California Gas Co',
 					DATE: '2005-05-02',
 					LATITUDE: 31.34,
-					LONGITUDE: -110.97
+					LONGITUDE: -110.97,
 				},
 				{
 					OBJECTID: 4,
@@ -469,7 +510,7 @@ export default {
 					NAME: 'Cornwall Pipeline',
 					DATE: '2020-01-15',
 					LATITUDE: 44.99,
-					LONGITUDE: -74.72
+					LONGITUDE: -74.72,
 				},
 				{
 					OBJECTID: 5,
@@ -477,8 +518,64 @@ export default {
 					NAME: 'Bluewater Pipeline Co',
 					DATE: '2019-11-29',
 					LATITUDE: 0,
-					LONGITUDE: 0
-				}
+					LONGITUDE: 0,
+				},
+				{
+					OBJECTID: 6,
+					COUNTRY: 'United States',
+					NAME: 'San Diego Gas and Electric',
+					DATE: '2010-10-01',
+					LATITUDE: 32.55,
+					LONGITUDE: -116.90,
+				},
+				{
+					OBJECTID: 7,
+					COUNTRY: 'United States',
+					NAME: 'Maritimes & Northeast Pipeline Co',
+					DATE: '2012-12-31',
+					LATITUDE: 45.20,
+					LONGITUDE: -67.45,
+				},
+				{
+					OBJECTID: 8,
+					COUNTRY: 'United States',
+					NAME: 'Great Lakes Transmission',
+					DATE: '2015-07-01',
+					LATITUDE: 46.45,
+					LONGITUDE: -84.44,
+				},
+				{
+					OBJECTID: 9,
+					COUNTRY: 'United States',
+					NAME: 'Viking Gas Tranmssion',
+					DATE: '1998-05-14',
+					LATITUDE: 48.99,
+					LONGITUDE: -97.05,
+				},
+				{
+					OBJECTID: 10,
+					COUNTRY: 'Canada',
+					NAME: 'Carway Line',
+					DATE: '2024-06-06',
+					LATITUDE: 48.99,
+					LONGITUDE: -113.28,
+				},
+				{
+					OBJECTID: 11,
+					COUNTRY: 'Canada',
+					NAME: 'Mainline',
+					DATE: '2019-03-15',
+					LATITUDE: 45.22,
+					LONGITUDE: -67.43,
+				},
+				{
+					OBJECTID: 12,
+					COUNTRY: 'Canada',
+					NAME: 'Vector',
+					DATE: '2019-10-31',
+					LATITUDE: 42.79,
+					LONGITUDE: -82.47,
+				},
 			];
 		},
 	},
@@ -486,7 +583,10 @@ export default {
 		this.gridOptions = {
 			enableFilter: true,
 			floatingFilter: true,
-			suppressRowTransform: true
+			suppressRowTransform: true,
+			onFilterChanged: this.updateFilterInfo,
+			onBodyScroll: this.updateFilterInfo,
+			rowBuffer: 0,
 		};
 	},
 };
