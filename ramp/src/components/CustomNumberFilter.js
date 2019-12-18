@@ -7,11 +7,13 @@ export default Vue.extend({
 				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				v-model="minVal"
+				placeholder="min"
 				@change="minValChanged($event)"/>
 			<input class="rv-max"
 				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				v-model="maxVal"
+				placeholder="max"
 				@change="maxValChanged($event)"/>
 		</div>
 	`,
