@@ -5,8 +5,10 @@ export default Vue.extend({
 		<div>
 			<div style="float: left; display: inline; width: 49%; z-index: 10;">
 				<input
+					class="rv-date-input"
 					style="width: 50%; float: left; line-height: 28px; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; margin-top: 22px"
 					type="text"
+					placeholder="date min"
 					v-model="minDateVal"
 					disabled/>
 				<md-datepicker
@@ -17,8 +19,10 @@ export default Vue.extend({
 			</div>
 			<div style="float: left; display: inline; width: 49%;">
 				<input
+					class="rv-date-input"
 					style="width: 50%; float: left; line-height: 28px; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; margin-top: 22px"
 					type="text"
+					placeholder="date max"
 					v-model="maxDateVal"
 					disabled/>
 				<md-datepicker
