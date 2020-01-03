@@ -64,14 +64,15 @@ export default {
     toggle: function() {
       this.element.toggle();
       if (this.element.toggled) {
-        this.$store.getters.getEntries.allUntoggled = false;
+        this.$store.dispatch("toggleOffOption", "allUntoggled");
         this.$store.dispatch("updateHeaderOption", "toggled");
       } else {
-        this.$store.getters.getEntries.allToggled = false;
+        this.$store.dispatch("toggleOffOption", "allToggled");
         this.$store.dispatch("updateHeaderOption", "untoggled");
       }
     },
     openTable: function() {
+      // TODO: following code needs to be changed - call an action (dispatch) to open table instead of directly modifying state with commit mutation
       let currentTable = this.$store.getters.getOpenTable;
 
       if(currentTable != null && currentTable !== this.element) {

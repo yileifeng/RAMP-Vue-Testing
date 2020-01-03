@@ -94,6 +94,9 @@ const store = new Vuex.Store({
     UPDATE_HEADER_OPTIONS (state, option) {
       state.legendComponents.updateHeaderOption(option);
     },
+    TOGGLE_OFF_OPTION (state, option) {
+      state.legendComponents.toggleOffOption(option);
+    },
     SET_OPEN_TABLE (state, table) {
       state.openTable = table;
     }
@@ -110,6 +113,9 @@ const store = new Vuex.Store({
     },
     updateHeaderOption: (context, option) => {
       context.commit('UPDATE_HEADER_OPTIONS', option);
+    },
+    toggleOffOption: (context, option) => {
+      context.commit('TOGGLE_OFF_OPTION', option);
     }
   }
 });

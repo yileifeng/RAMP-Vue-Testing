@@ -50,20 +50,20 @@ export default {
       }
       this.clickedButton = false;
       if (this.element.expanded) {
-        this.$store.getters.getEntries.allCollapsed = false;
+        this.$store.dispatch("toggleOffOption", "allCollapsed");
         this.$store.dispatch("updateHeaderOption", "expanded");
       } else {
-        this.$store.getters.getEntries.allExpanded = false;
+        this.$store.dispatch("toggleOffOption", "allExpanded");
         this.$store.dispatch("updateHeaderOption", "collapsed");
       }
     },
     toggle: function() {
       this.element.toggle();
       if (this.element.toggled) {
-        this.$store.getters.getEntries.allUntoggled = false;
+        this.$store.dispatch("toggleOffOption", "allUntoggled");
         this.$store.dispatch("updateHeaderOption", "toggled");
       } else {
-        this.$store.getters.getEntries.allToggled = false;
+        this.$store.dispatch("toggleOffOption", "allToggled");
         this.$store.dispatch("updateHeaderOption", "untoggled");
       }
     },
