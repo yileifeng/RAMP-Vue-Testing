@@ -199,7 +199,24 @@ export class LayerState {
     }
   }
 
-  toggleAllOptions (option) {
+  toggleOffOption(option) {
+    switch (option) {
+      case "allExpanded":
+        this.root.allExpanded = false;
+        break;
+      case "allCollapsed":
+        this.root.allCollapsed = false;
+        break;
+      case "allToggled":
+        this.root.allToggled = false;
+        break;
+      case "allUntoggled":
+        this.root.allUntoggled = false;
+        break;
+    }
+  }
+
+  toggleAllOptions(option) {
     // DFS tree traversal to expand/toggle all entries
     let stack = [];
     // assuming we are starting from root (calling this method on root, if not we need to find and push root first)
