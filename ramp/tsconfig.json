@@ -33,7 +33,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx", "src/enhancedTable/panel-state-manager.js"
   ],
   "exclude": [
     "node_modules"

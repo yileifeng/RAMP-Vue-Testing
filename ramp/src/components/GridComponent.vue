@@ -212,6 +212,7 @@
 			:style="{ height: gridHeight }"
 			:gridOptions="gridOptions"
 			:columnDefs="columnDefs"
+			:panelStateManager="panelStateManager"
 			:rowData="rowData"
 			:modules="modules"
 			:frameworkComponents="frameworkComponents"
@@ -226,6 +227,7 @@ import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-material.css';
 import { AgGridVue } from '@ag-grid-community/vue';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import PanelStateManager from '../enhancedTable/panel-state-manager';
 import CustomNumberFilter from './CustomNumberFilter';
 import CustomTextFilter from './CustomTextFilter';
 import CustomDateFilter from './CustomDateFilter';
@@ -253,12 +255,24 @@ export default {
 			filterByExtent: false,
 			showFilters: true,
 			lazyFilterEnabled: true, // default mode set lazyFilters to true
+			panelStateManager: null,
 		};
 	},
 	components: {
 		AgGridVue,
 	},
 	beforeMount() {
+		// initialize panel state manager (placeholder acts as replacement for baseLayer)
+		const placeholder = {
+			table: {
+				maximize: false, // TODO
+				showFilter: this.showFilter,
+				filterByExtent: this.filterByExtent,
+				lazyFilter: this.lazyFilterEnabled
+			}
+		};
+		this.panelStateManager = new PanelStateManager(placeholder);
+
 		this.columnDefs = [
 			{
 				headerName: 'OBJECTID',
@@ -329,6 +343,7 @@ export default {
 				this.setUpDateFilter(col);
 			}
 		});
+
 		// initialize row data
 		this.rowData = this.createRowData();
 
@@ -356,7 +371,7 @@ export default {
 		// unused atm since we want to have lazy filters as default filter mode
 		toggleLazyFilters() {
 			// problem: after applying filters to column on a lazy filters, toggling filters mode does not change the previously filtered column settings
-			// changing search filter mode
+			// changing search filter mode (WILL WORK WITH TABLE REFRESH)
 			this.lazyFilterEnabled = !this.lazyFilterEnabled;
 			this.columnDefs.forEach(col => {
 				if (col.filter === 'agTextColumnFilter') {

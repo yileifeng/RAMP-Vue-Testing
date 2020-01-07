@@ -21,11 +21,19 @@ export default Vue.extend({
 		return {
 			minVal: 0,
 			maxVal: 0,
+			colDef: {},
+			panelStateManager: null
 		};
 	},
 	beforeMount() {
-		this.minVal = '';
-		this.maxVal = '';
+		// would like better way to access panel state manager, pass it down as a prop? (didn't know how to do this)
+		this.panelStateManager = this.$parent.$attrs.panelStateManager;
+		this.colDef = this.params.column.colDef;
+		// get preloaded values if they exist
+		this.minVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' min');
+		this.minVal = this.minVal !== undefined ? this.minVal : '';
+		this.maxVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' max');
+		this.maxVal = this.maxVal !== undefined ? this.maxVal : '';
 	},
 	methods: {
 		minValChanged(event) {
@@ -34,6 +42,8 @@ export default Vue.extend({
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
+				const minKey = that.colDef.field + ' min';
+				that.panelStateManager.setColumnFilter(minKey, that.minVal);
 			});
 		},
 		maxValChanged(event) {
@@ -42,6 +52,8 @@ export default Vue.extend({
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
+				const maxKey = that.colDef.field + ' max';
+				that.panelStateManager.setColumnFilter(maxKey, that.maxVal);
 			});
 		},
 		setFilterModel(instance) {
@@ -67,7 +79,7 @@ export default Vue.extend({
 					filter: that.minVal,
 					filterTo: null,
 				});
-			// temp solution to act as clear filters
+			// otherwise clear filters
 			} else {
 				instance.setModel(null);
 			}

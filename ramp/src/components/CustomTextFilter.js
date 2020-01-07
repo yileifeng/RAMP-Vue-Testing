@@ -13,14 +13,21 @@ export default Vue.extend({
 	`,
 	data: function() {
 		return {
-			filterValue: ''
+			filterValue: '',
+			colDef: {},
+			panelStateManager: null
 		};
 	},
 	beforeMount() {
-		this.filterValue = '';
+		// would like better way to access panel state manager, pass it down as a prop? (didn't know how to do this)
+		this.panelStateManager = this.$parent.$attrs.panelStateManager;
+		this.colDef = this.params.column.colDef;
+		// get preloaded value if it exists
+		this.filterValue = this.panelStateManager.getColumnFilter(this.colDef.field);
+		this.filterValue = this.filterValue !== undefined ? this.filterValue : '';
 	},
 	methods: {
-		valueChanged(event) {
+		valueChanged() {
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				instance.setModel({
@@ -29,6 +36,7 @@ export default Vue.extend({
 					filter: that.filterValue
 				});
 				instance.onFilterChanged();
+				that.panelStateManager.setColumnFilter(that.colDef.field, that.filterValue);
 			});
 		}
 	},
