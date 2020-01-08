@@ -18,17 +18,24 @@ export default Vue.extend({
 	data: function() {
 		return {
 			selectedOption: '',
+			colDef: {},
+			panelStateManager: null
 		};
 	},
 	beforeMount() {
+		// would like better way to access panel state manager, pass it down as a prop? (didn't know how to do this)
+		this.panelStateManager = this.$parent.$attrs.panelStateManager;
+		this.colDef = this.params.column.colDef;
 		let rowData = this.$parent.rowData;
 		const colName = this.params.column.colId;
+
 		// obtain row data and filter out duplicates for selector list
 		rowData = rowData.map(row => row[colName]);
 		this.options = rowData.filter((item, idx) => rowData.indexOf(item) === idx);
 		// add '...' as option to clear selector
 		this.options.unshift('...');
-		this.selectedOption = '';
+		this.selectedOption = this.panelStateManager.getColumnFilter(this.colDef.field);
+		this.selectedOption = this.selectedOption !== undefined ? this.selectedOption : '';
 	},
 	watch: {
 		selectedOption: function (newOption, oldOption) {
@@ -55,6 +62,7 @@ export default Vue.extend({
 					});
 				}
 				instance.onFilterChanged();
+				that.panelStateManager.setColumnFilter(that.colDef.field, that.selectedOption);
 			});
 		},
 	},

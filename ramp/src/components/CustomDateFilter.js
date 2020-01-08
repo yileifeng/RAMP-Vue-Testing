@@ -39,13 +39,20 @@ export default Vue.extend({
 			maxDate: null,
 			minDateVal: '',
 			maxDateVal: '',
+			colDef: {},
+			panelStateManager: null
 		};
 	},
 	beforeMount() {
+		// would like better way to access panel state manager, pass it down as a prop? (didn't know how to do this)
+		this.panelStateManager = this.$parent.$attrs.panelStateManager;
+		this.colDef = this.params.column.colDef;
 		this.minDate = null;
 		this.maxDate = null;
-		this.minDateVal = '';
-		this.maxDateVal = '';
+		this.minDateVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' min');
+		this.minDateVal = this.minDateVal !== undefined ? this.minDateVal : '';
+		this.maxDateVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' max');
+		this.maxDateVal = this.maxDateVal !== undefined ? this.maxDateVal : '';
 	},
 	watch: {
 		minDate: function (newDate, oldDate) {
@@ -68,6 +75,8 @@ export default Vue.extend({
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
+				const minKey = that.colDef.field + ' min';
+				that.panelStateManager.setColumnFilter(minKey, that.minDateVal);
 			});
 		},
 		maxDateChanged(newDate) {
@@ -78,6 +87,8 @@ export default Vue.extend({
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
+				const maxKey = that.colDef.field + ' max';
+				that.panelStateManager.setColumnFilter(maxKey, that.maxDateVal);
 			});
 		},
 		setFilterModel(instance) {
