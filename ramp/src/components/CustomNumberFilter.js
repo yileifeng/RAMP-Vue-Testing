@@ -8,13 +8,13 @@ export default Vue.extend({
 				type="text"
 				v-model="minVal"
 				placeholder="min"
-				@change="minValChanged($event)"/>
+				@change="minValChanged()"/>
 			<input class="rv-max"
 				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				v-model="maxVal"
 				placeholder="max"
-				@change="maxValChanged($event)"/>
+				@change="maxValChanged()"/>
 		</div>
 	`,
 	data: function() {
@@ -36,9 +36,8 @@ export default Vue.extend({
 		this.maxVal = this.maxVal !== undefined ? this.maxVal : '';
 	},
 	methods: {
-		minValChanged(event) {
-			const newMinValue = event.target.value !== '' ? Number(event.target.value) : event.target.value;
-			this.minVal = newMinValue !== '' && !isNaN(newMinValue) ? newMinValue : '';
+		minValChanged() {
+			this.minVal = this.minVal !== '' && !isNaN(this.minVal) ? this.minVal : '';
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
@@ -46,9 +45,8 @@ export default Vue.extend({
 				that.panelStateManager.setColumnFilter(minKey, that.minVal);
 			});
 		},
-		maxValChanged(event) {
-			const newMaxValue = event.target.value !== '' ? Number(event.target.value) : event.target.value;
-			this.maxVal = newMaxValue !== '' && !isNaN(newMaxValue) ? newMaxValue : '';
+		maxValChanged() {
+			this.maxVal = this.maxVal !== '' && !isNaN(this.maxVal) ? this.maxVal : '';
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);

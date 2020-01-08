@@ -20,15 +20,13 @@ export default class PanelStateManager {
     }
 
     getColumnFilter(colDefField) {
-        // console.log("get column filters: ", colDefField, this.columnFilters[colDefField]);
         return this.columnFilters[colDefField];
     }
 
     setColumnFilter(colDefField, filterValue) {
-        // console.log("set column filters: ", colDefField, filterValue);
         let newFilterValue = filterValue;
         if (filterValue && typeof filterValue === 'string') {
-            const escRegex = /[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+            const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
             newFilterValue = filterValue.replace(escRegex, '\\$&');
         }
         this.columnFilters[colDefField] = newFilterValue;

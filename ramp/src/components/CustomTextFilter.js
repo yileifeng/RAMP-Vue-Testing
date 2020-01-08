@@ -23,8 +23,7 @@ export default Vue.extend({
 		this.panelStateManager = this.$parent.$attrs.panelStateManager;
 		this.colDef = this.params.column.colDef;
 		// get preloaded value if it exists
-		this.filterValue = this.panelStateManager.getColumnFilter(this.colDef.field);
-		this.filterValue = this.filterValue !== undefined ? this.filterValue : '';
+		this.filterValue = this.panelStateManager.getColumnFilter(this.colDef.field) !== undefined ? this.panelStateManager.getColumnFilter(this.colDef.field) : this.filterValue;
 	},
 	methods: {
 		valueChanged() {
