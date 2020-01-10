@@ -237,7 +237,7 @@ export default {
 			filterStatus: '',
 			containerHeight: null,
 			filterByExtent: false,
-			showFilters: false,
+			showFilters: true,
 			lazyFilterEnabled: true, // default mode set lazyFilters to true
 			panelStateManager: null,
 		};
@@ -249,17 +249,12 @@ export default {
 		// obtain existing panel state manager if it exists
 		if (this.$store.getters.getPanelStateManager) {
 			this.panelStateManager = this.$store.getters.getPanelStateManager;
-			// update table values with saved values
-			this.fullscreen = this.panelStateManager.maximized;
-			this.filterByExtent = this.panelStateManager.filterByExtent;
-			this.showFilters = this.panelStateManager.colFilter;
-			this.lazyFilterEnabled = this.panelStateManager.lazyFilter;
 		} else {
 			// initialize panel state manager (placeholder acts as replacement for baseLayer)
 			const placeholder = {
 				table: {
 					maximize: this.fullScreen,
-					showFilter: this.showFilter,
+					showFilter: this.showFilters,
 					filterByExtent: this.filterByExtent,
 					lazyFilter: this.lazyFilterEnabled
 				}
@@ -301,6 +296,7 @@ export default {
 			this.getGridHeight();
 			// initialize filter info + status
 			this.updateFilterInfo();
+			this.updateGridProperties();
 		},
 		updateQuickSearch() {
 			this.gridApi.setQuickFilter(this.quicksearch);
@@ -428,6 +424,15 @@ export default {
 			this.filterStatus = this.filterInfo.visibleRows !== this.rowData.length ?
 					`${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown (filtered from ${this.rowData.length} records)` :
 					`${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
+		},
+		updateGridProperties() {
+			// update table values with saved values
+			if (this.panelStateManager) {
+				this.fullscreen !== this.panelStateManager.maximized ? this.setSize(this.panelStateManager.maximized) : 0;
+				this.filterByExtent !== this.panelStateManager.filterByExtent ? this.toggleFilterByExtent() : 0;
+				this.showFilters !== this.panelStateManager.colFilter ? this.toggleShowFilters() : 0;
+				this.lazyFilterEnabled !== this.panelStateManager.lazyFilter ? this.toggleLazyFilters() : 0;
+			}
 		},
 		getGridHeight() {
 			if (this.fullscreen) {

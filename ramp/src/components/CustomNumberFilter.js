@@ -7,14 +7,12 @@ export default Vue.extend({
 				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				v-model="minVal"
-				placeholder="min"
-				@change="minValChanged()"/>
+				placeholder="min"/>
 			<input class="rv-max"
 				style="width: 45%; background-color: #fafafa; border: 1px solid #607d8b; outline: initial; line-height: 28px; padding-left: 12px; padding-right: 12px;"
 				type="text"
 				v-model="maxVal"
-				placeholder="max"
-				@change="maxValChanged()"/>
+				placeholder="max"/>
 		</div>
 	`,
 	data: function() {
@@ -30,10 +28,20 @@ export default Vue.extend({
 		this.panelStateManager = this.$parent.$attrs.panelStateManager;
 		this.colDef = this.params.column.colDef;
 		// get preloaded values if they exist
-		this.minVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' min');
-		this.minVal = this.minVal !== undefined ? this.minVal : '';
-		this.maxVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' max');
-		this.maxVal = this.maxVal !== undefined ? this.maxVal : '';
+		this.minVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' min') !== undefined ? this.panelStateManager.getColumnFilter(this.colDef.field + ' min') : '';
+		this.maxVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' max') !== undefined ? this.panelStateManager.getColumnFilter(this.colDef.field + ' max') : '';
+	},
+	watch: {
+		minVal: function(newVal, oldVal) {
+			if (newVal !== oldVal) {
+				this.minValChanged();
+			}
+		},
+		maxVal: function(newVal, oldVal) {
+			if (newVal !== oldVal) {
+				this.maxValChanged();
+			}
+		}
 	},
 	methods: {
 		minValChanged() {

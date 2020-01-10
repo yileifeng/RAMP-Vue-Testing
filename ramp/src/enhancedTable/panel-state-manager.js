@@ -10,7 +10,7 @@ export default class PanelStateManager {
     constructor(baseLayer) {
         this.baseLayer = baseLayer;
         this.isMaximized = baseLayer.table.maximize || false;
-        this.showFilter = baseLayer.table.showFilter;
+        this.showFilter = baseLayer.table.showFilter !== undefined ? baseLayer.table.showFilter : true;
         this.filterByExtent = baseLayer.table.filterByExtent || false;
         this.lazyFilter = baseLayer.table.lazyFilter !== undefined ? baseLayer.table.lazyFilter : true;
         this.columnFilters = {};
