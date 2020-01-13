@@ -5,7 +5,6 @@ export default Vue.extend({
 		<div>
 			<input class='rv-input'
 				style="width: 90%; line-height: 56px; padding-left: 12px; padding-right: 12px; background-color: #fafafa; border: 1px solid #607d8b; outline: initial"
-				@change="valueChanged()"
 				type="text"
 				placeholder="text"
 				v-model="filterValue"/>
@@ -23,8 +22,14 @@ export default Vue.extend({
 		this.panelStateManager = this.$parent.$attrs.panelStateManager;
 		this.colDef = this.params.column.colDef;
 		// get preloaded value if it exists
-		this.filterValue = this.panelStateManager.getColumnFilter(this.colDef.field);
-		this.filterValue = this.filterValue !== undefined ? this.filterValue : '';
+		this.filterValue = this.panelStateManager.getColumnFilter(this.colDef.field) !== undefined ? this.panelStateManager.getColumnFilter(this.colDef.field) : this.filterValue;
+	},
+	watch: {
+		filterValue: function (newOption, oldOption) {
+			if (newOption !== oldOption) {
+				this.valueChanged();
+			}
+		},
 	},
 	methods: {
 		valueChanged() {

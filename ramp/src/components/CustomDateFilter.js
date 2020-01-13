@@ -47,31 +47,37 @@ export default Vue.extend({
 		// would like better way to access panel state manager, pass it down as a prop? (didn't know how to do this)
 		this.panelStateManager = this.$parent.$attrs.panelStateManager;
 		this.colDef = this.params.column.colDef;
-		this.minDate = null;
-		this.maxDate = null;
-		this.minDateVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' min');
-		this.minDateVal = this.minDateVal !== undefined ? this.minDateVal : '';
-		this.maxDateVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' max');
-		this.maxDateVal = this.maxDateVal !== undefined ? this.maxDateVal : '';
+		this.minDateVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' min') !== undefined ? this.panelStateManager.getColumnFilter(this.colDef.field + ' min') : '';
+		this.maxDateVal = this.panelStateManager.getColumnFilter(this.colDef.field + ' max') !== undefined ? this.panelStateManager.getColumnFilter(this.colDef.field + ' max') : '';
+		this.minDate = this.minDateVal !== '' ? new Date(this.minDateVal) : null;
+		this.maxDate = this.maxDateVal !== '' ? new Date(this.maxDateVal) : null;
 	},
 	watch: {
 		minDate: function (newDate, oldDate) {
 			if (newDate !== oldDate) {
-				this.minDateChanged(newDate);
+				this.minDateVal = this.minDate ? new Date(this.minDate) : '';
+				this.minDateVal = this.minDateVal !== '' ? `${this.minDateVal.getFullYear()}-${this.minDateVal.getMonth() + 1}-${this.minDateVal.getDate()}` : '';
+			}
+		},
+		minDateVal: function(newDateVal, oldDateVal) {
+			if (newDateVal !== oldDateVal) {
+				this.minDateChanged();
 			}
 		},
 		maxDate: function (newDate, oldDate) {
 			if (newDate !== oldDate) {
-				this.maxDateChanged(newDate);
+				this.maxDateVal = this.maxDate ? new Date(this.maxDate) : '';
+				this.maxDateVal = this.maxDateVal !== '' ? `${this.maxDateVal.getFullYear()}-${this.maxDateVal.getMonth() + 1}-${this.maxDateVal.getDate()}` : '';
 			}
 		},
+		maxDateVal: function(newDateVal, oldDateVal) {
+			if (newDateVal !== oldDateVal) {
+				this.maxDateChanged();
+			}
+		}
 	},
 	methods: {
-		minDateChanged(newDate) {
-			const newMinDate = newDate !== null ? newDate : null;
-			this.minDate = newMinDate ? newMinDate : null;
-			this.minDateVal = this.minDate ? new Date(this.minDate) : '';
-			this.minDateVal = this.minDateVal !== '' ? `${this.minDateVal.getFullYear()}-${this.minDateVal.getMonth() + 1}-${this.minDateVal.getDate()}` : '';
+		minDateChanged() {
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);
@@ -79,11 +85,7 @@ export default Vue.extend({
 				that.panelStateManager.setColumnFilter(minKey, that.minDateVal);
 			});
 		},
-		maxDateChanged(newDate) {
-			const newMaxDate = newDate !== null ? newDate : null;
-			this.maxDate = newMaxDate ? newMaxDate : null;
-			this.maxDateVal = this.maxDate ? new Date(this.maxDate) : '';
-			this.maxDateVal = this.maxDateVal !== '' ? `${this.maxDateVal.getFullYear()}-${this.maxDateVal.getMonth() + 1}-${this.maxDateVal.getDate()}` : '';
+		maxDateChanged() {
 			let that = this;
 			this.params.parentFilterInstance(function(instance) {
 				that.setFilterModel(instance);

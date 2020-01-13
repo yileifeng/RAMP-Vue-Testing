@@ -4,7 +4,6 @@ export class LayerState {
     this.parent = parent;
     this.symbologyStack = null;
     this.tableOpen = false;
-    // do we want to store table data?
 
     // find and store root
     let curEntry = this;
@@ -40,17 +39,166 @@ export class LayerState {
 
     // hardcoded table attributes to try to get grid working first
     this.columnDefs = [
-      {headerName: 'OBJECTID', field: 'OBJECTID', sortable: true, filter: 'agNumberColumnFilter'},
-      {headerName: 'COUNTRY', field: 'COUNTRY', sortable: true, filter: 'agTextColumnFilter'},
-      {headerName: 'NAME', field: 'NAME', sortable: true, filter: 'agTextColumnFilter'},
-      {headerName: 'DATE', field: 'DATE', sortable: true, filter: 'agDateColumnFilter'},
-    ];
+			{
+				headerName: 'OBJECTID',
+				field: 'OBJECTID',
+				sortable: true,
+				lockPosition: true,
+				filter: 'agNumberColumnFilter',
+				filterParams: {},
+				hide: false,
+			},
+			{
+				headerName: 'COUNTRY',
+				field: 'COUNTRY',
+				sortable: true,
+				lockPosition: true,
+				hide: false,
+				filter: 'agTextColumnFilter',
+				isSelector: true,
+				filterParams: {},
+				width: 300,
+			},
+			{
+				headerName: 'NAME',
+				field: 'NAME',
+				sortable: true,
+				lockPosition: true,
+				hide: false,
+				filter: 'agTextColumnFilter',
+				filterParams: {},
+				width: 400,
+			},
+			{
+				headerName: 'DATE',
+				field: 'DATE',
+				width: 380,
+				sortable: true,
+				lockPosition: true,
+				hide: false,
+				filter: 'agDateColumnFilter',
+				filterParams: {},
+			},
+			{
+				headerName: 'LATITUDE',
+				field: 'LATITUDE',
+				sortable: true,
+				lockPosition: true,
+				filter: 'agNumberColumnFilter',
+				filterParams: {},
+				hide: false,
+			},
+			{
+				headerName: 'LONGITUDE',
+				field: 'LONGITUDE',
+				sortable: true,
+				lockPosition: true,
+				filter: 'agNumberColumnFilter',
+				filterParams: {},
+				hide: false,
+			},
+		];
 
     this.rowData = [
-      {OBJECTID: 1, COUNTRY: 'Mexico', NAME: 'Cornwall Pipeline', DATE: '01/01/2020'},
-      {OBJECTID: 2, COUNTRY: 'Canada', NAME: 'Mainline', DATE: '12/25/2019'},
-      {OBJECTID: 3, COUNTRY: 'United States', NAME: 'Bluewater Pipeline Co', DATE: '11/29/2019'}
-   ];
+      {
+        OBJECTID: 1,
+        COUNTRY: 'Mexico',
+        NAME: 'Cornwall Pipeline',
+        DATE: '2020-01-02',
+        LATITUDE: 129.17,
+        LONGITUDE: -115.25,
+      },
+      {
+        OBJECTID: 2,
+        COUNTRY: 'Canada',
+        NAME: 'Mainline',
+        DATE: '2019-12-25',
+        LATITUDE: 132.38,
+        LONGITUDE: -118.72,
+      },
+      {
+        OBJECTID: 3,
+        COUNTRY: 'United States',
+        NAME: 'Southern California Gas Co',
+        DATE: '2005-05-02',
+        LATITUDE: 31.34,
+        LONGITUDE: -110.97,
+      },
+      {
+        OBJECTID: 4,
+        COUNTRY: 'Canada',
+        NAME: 'Cornwall Pipeline',
+        DATE: '2020-01-15',
+        LATITUDE: 44.99,
+        LONGITUDE: -74.72,
+      },
+      {
+        OBJECTID: 5,
+        COUNTRY: 'United States',
+        NAME: 'Bluewater Pipeline Co',
+        DATE: '2019-11-29',
+        LATITUDE: 0,
+        LONGITUDE: 0,
+      },
+      {
+        OBJECTID: 6,
+        COUNTRY: 'United States',
+        NAME: 'San Diego Gas and Electric',
+        DATE: '2010-10-01',
+        LATITUDE: 32.55,
+        LONGITUDE: -116.90,
+      },
+      {
+        OBJECTID: 7,
+        COUNTRY: 'United States',
+        NAME: 'Maritimes & Northeast Pipeline Co',
+        DATE: '2012-12-31',
+        LATITUDE: 45.20,
+        LONGITUDE: -67.45,
+      },
+      {
+        OBJECTID: 8,
+        COUNTRY: 'United States',
+        NAME: 'Great Lakes Transmission',
+        DATE: '2015-07-01',
+        LATITUDE: 46.45,
+        LONGITUDE: -84.44,
+      },
+      {
+        OBJECTID: 9,
+        COUNTRY: 'United States',
+        NAME: 'Viking Gas Tranmssion',
+        DATE: '1998-05-14',
+        LATITUDE: 48.99,
+        LONGITUDE: -97.05,
+      },
+      {
+        OBJECTID: 10,
+        COUNTRY: 'Canada',
+        NAME: 'Carway Line',
+        DATE: '2024-06-06',
+        LATITUDE: 48.99,
+        LONGITUDE: -113.28,
+      },
+      {
+        OBJECTID: 11,
+        COUNTRY: 'Canada',
+        NAME: 'Mainline',
+        DATE: '2019-03-15',
+        LATITUDE: 45.22,
+        LONGITUDE: -67.43,
+      },
+      {
+        OBJECTID: 12,
+        COUNTRY: 'Canada',
+        NAME: 'Vector',
+        DATE: '2019-10-31',
+        LATITUDE: 42.79,
+        LONGITUDE: -82.47,
+      },
+    ];
+
+    this.panelStateManager = null;
   }
 
   addChild(node) {
@@ -59,12 +207,8 @@ export class LayerState {
     node.toggleable && node.toggled ? this.root.allUntoggled = false : this.root.allToggled = false;
   }
 
-  getAttributes() {
-    return this.columnDefs;
-  }
-
-  getRowData() {
-    return this.rowData;
+  setPanelStateManager(panelStateManager) {
+    this.panelStateManager = panelStateManager;
   }
 
   updateHeaderOption(option) {

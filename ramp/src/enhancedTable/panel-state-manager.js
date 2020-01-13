@@ -10,7 +10,7 @@ export default class PanelStateManager {
     constructor(baseLayer) {
         this.baseLayer = baseLayer;
         this.isMaximized = baseLayer.table.maximize || false;
-        this.showFilter = baseLayer.table.showFilter;
+        this.showFilter = baseLayer.table.showFilter !== undefined ? baseLayer.table.showFilter : true;
         this.filterByExtent = baseLayer.table.filterByExtent || false;
         this.lazyFilter = baseLayer.table.lazyFilter !== undefined ? baseLayer.table.lazyFilter : true;
         this.columnFilters = {};
@@ -20,15 +20,13 @@ export default class PanelStateManager {
     }
 
     getColumnFilter(colDefField) {
-        // console.log("get column filters: ", colDefField, this.columnFilters[colDefField]);
         return this.columnFilters[colDefField];
     }
 
     setColumnFilter(colDefField, filterValue) {
-        // console.log("set column filters: ", colDefField, filterValue);
         let newFilterValue = filterValue;
         if (filterValue && typeof filterValue === 'string') {
-            const escRegex = /[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+            const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
             newFilterValue = filterValue.replace(escRegex, '\\$&');
         }
         this.columnFilters[colDefField] = newFilterValue;

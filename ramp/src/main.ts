@@ -4,6 +4,7 @@ import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
 import App from './App.vue';
 import { LayerState, VisibilitySet } from './classes/LayerState.js';
+import PanelStateManager from './enhancedTable/panel-state-manager';
 
 Vue.use(VueMaterial);
 Vue.use(Vuex);
@@ -80,7 +81,10 @@ const store = new Vuex.Store({
     getAllUntoggled: state => state.legendComponents.allUntoggled,
     getAllExpanded: state => state.legendComponents.allExpanded,
     getAllCollapsed: state => state.legendComponents.allCollapsed,
-    getOpenTable: state => state.openTable
+    getOpenTable: state => state.openTable,
+    getColDefs: state => state.legendComponents.columnDefs,
+    getRowData: state => state.legendComponents.rowData,
+    getPanelStateManager: state => state.legendComponents.panelStateManager
   },
   mutations: {
     ADD_ENTRY(state, payload) {
@@ -99,7 +103,10 @@ const store = new Vuex.Store({
     },
     SET_OPEN_TABLE (state, table) {
       state.openTable = table;
-    }
+    },
+    SET_PANEL_STATE_MANAGER (state, panelStateManager) {
+      state.legendComponents.setPanelStateManager(panelStateManager);
+    },
   },
   actions: {
     addEntry: (context, payload) => {
@@ -116,7 +123,10 @@ const store = new Vuex.Store({
     },
     toggleOffOption: (context, option) => {
       context.commit('TOGGLE_OFF_OPTION', option);
-    }
+    },
+    setPanelStateManager: (context, panelStateManager) => {
+      context.commit('SET_PANEL_STATE_MANAGER', panelStateManager);
+    },
   }
 });
 

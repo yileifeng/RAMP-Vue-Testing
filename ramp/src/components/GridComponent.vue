@@ -120,28 +120,18 @@
 				</md-button>
 
 				<md-menu-content>
-					<md-menu-item
-						v-on:click="
-							fullscreen = false;
-							getGridHeight();
-						"
-					>
+					<md-menu-item v-on:click="setSize(false)">
 						Split View
 						<md-icon class="md-icon-small" v-if="!fullscreen">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
 					</md-menu-item>
-					<md-menu-item
-						v-on:click="
-							fullscreen = true;
-							getGridHeight();
-						"
-					>
+					<md-menu-item v-on:click="setSize(true)">
 						Maximize
 						<md-icon class="md-icon-small" v-if="fullscreen">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
 					</md-menu-item>
 					<div class="rv-separator"></div>
-					<md-menu-item v-on:click="filterByExtent = !filterByExtent">
+					<md-menu-item v-on:click="toggleFilterByExtent">
 						<span>
 							<md-icon class="md-icon-small"
 								><svg
@@ -164,13 +154,7 @@
 						<md-icon class="md-icon-small" v-if="filterByExtent">check</md-icon>
 						<md-icon class="md-icon-small" v-else></md-icon>
 					</md-menu-item>
-					<md-menu-item
-						v-on:click="
-							showFilters = !showFilters;
-							gridOptions.floatingFilter = !gridOptions.floatingFilter;
-							gridOptions.api.refreshHeader();
-						"
-					>
+					<md-menu-item v-on:click="toggleShowFilters">
 						<span>
 							<md-icon class="md-icon-small"
 								><svg
@@ -262,78 +246,26 @@ export default {
 		AgGridVue,
 	},
 	beforeMount() {
-		// initialize panel state manager (placeholder acts as replacement for baseLayer)
-		const placeholder = {
-			table: {
-				maximize: false, // TODO
-				showFilter: this.showFilter,
-				filterByExtent: this.filterByExtent,
-				lazyFilter: this.lazyFilterEnabled
-			}
-		};
-		this.panelStateManager = new PanelStateManager(placeholder);
+		// obtain existing panel state manager if it exists
+		if (this.$store.getters.getPanelStateManager) {
+			this.panelStateManager = this.$store.getters.getPanelStateManager;
+		} else {
+			// initialize panel state manager (placeholder acts as replacement for baseLayer)
+			const placeholder = {
+				table: {
+					maximize: this.fullScreen,
+					showFilter: this.showFilters,
+					filterByExtent: this.filterByExtent,
+					lazyFilter: this.lazyFilterEnabled
+				}
+			};
+			this.panelStateManager = new PanelStateManager(placeholder);
+			this.$store.dispatch("setPanelStateManager", this.panelStateManager);
+		}
 
-		this.columnDefs = [
-			{
-				headerName: 'OBJECTID',
-				field: 'OBJECTID',
-				sortable: true,
-				lockPosition: true,
-				filter: 'agNumberColumnFilter',
-				filterParams: {},
-				hide: false,
-			},
-			{
-				headerName: 'COUNTRY',
-				field: 'COUNTRY',
-				sortable: true,
-				lockPosition: true,
-				hide: false,
-				filter: 'agTextColumnFilter',
-				isSelector: true,
-				filterParams: {},
-				width: 300,
-			},
-			{
-				headerName: 'NAME',
-				field: 'NAME',
-				sortable: true,
-				lockPosition: true,
-				hide: false,
-				filter: 'agTextColumnFilter',
-				filterParams: {},
-				width: 400,
-			},
-			{
-				headerName: 'DATE',
-				field: 'DATE',
-				width: 380,
-				sortable: true,
-				lockPosition: true,
-				hide: false,
-				filter: 'agDateColumnFilter',
-				filterParams: {},
-			},
-			{
-				headerName: 'LATITUDE',
-				field: 'LATITUDE',
-				sortable: true,
-				lockPosition: true,
-				filter: 'agNumberColumnFilter',
-				filterParams: {},
-				hide: false,
-			},
-			{
-				headerName: 'LONGITUDE',
-				field: 'LONGITUDE',
-				sortable: true,
-				lockPosition: true,
-				filter: 'agNumberColumnFilter',
-				filterParams: {},
-				hide: false,
-			},
-		];
-		// set up column filterse
+		// obtain col defs from current layer
+		this.columnDefs = this.$store.getters.getColDefs;
+		// set up column filters
 		this.columnDefs.forEach(col => {
 			if (col.filter === 'agNumberColumnFilter') {
 				this.setUpNumberFilter(col);
@@ -345,7 +277,7 @@ export default {
 		});
 
 		// initialize row data
-		this.rowData = this.createRowData();
+		this.rowData = this.$store.getters.getRowData;
 
 		// imported separate components
 		this.frameworkComponents = {
@@ -364,9 +296,15 @@ export default {
 			this.getGridHeight();
 			// initialize filter info + status
 			this.updateFilterInfo();
+			this.updateGridProperties();
 		},
 		updateQuickSearch() {
 			this.gridApi.setQuickFilter(this.quicksearch);
+		},
+		setSize(value) {
+			this.fullscreen = value;
+			this.panelStateManager.maximized = this.fullscreen;
+			this.getGridHeight();
 		},
 		// unused atm since we want to have lazy filters as default filter mode
 		toggleLazyFilters() {
@@ -383,6 +321,16 @@ export default {
 			// clear all active filters
 			this.gridApi.setFilterModel(null);
 			this.gridApi.onFilterChanged();
+		},
+		toggleFilterByExtent() {
+			this.filterByExtent = !this.filterByExtent;
+			this.panelStateManager.filterByExtent = this.filterByExtent;
+		},
+		toggleShowFilters() {
+			this.showFilters = !this.showFilters;
+			this.gridOptions.floatingFilter = this.showFilters;
+			this.panelStateManager.colFilter = this.showFilters;
+			this.gridOptions.api.refreshHeader();
 		},
 		setUpNumberFilter(colDef) {
 			colDef.floatingFilterComponent = 'numberFloatingFilter';
@@ -477,6 +425,15 @@ export default {
 					`${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown (filtered from ${this.rowData.length} records)` :
 					`${this.filterInfo.firstRow} - ${this.filterInfo.lastRow} of ${this.filterInfo.visibleRows} entries shown`;
 		},
+		updateGridProperties() {
+			// update table values with saved values
+			if (this.panelStateManager) {
+				this.fullscreen !== this.panelStateManager.maximized ? this.setSize(this.panelStateManager.maximized) : 0;
+				this.filterByExtent !== this.panelStateManager.filterByExtent ? this.toggleFilterByExtent() : 0;
+				this.showFilters !== this.panelStateManager.colFilter ? this.toggleShowFilters() : 0;
+				this.lazyFilterEnabled !== this.panelStateManager.lazyFilter ? this.toggleLazyFilters() : 0;
+			}
+		},
 		getGridHeight() {
 			if (this.fullscreen) {
 				this.gridHeight = 'calc(98vh - 49px)';
@@ -492,106 +449,6 @@ export default {
 
 			this.gridOptions.api.setFilterModel({});
 			this.gridApi.refreshHeader();
-		},
-		createRowData() {
-			return [
-				{
-					OBJECTID: 1,
-					COUNTRY: 'Mexico',
-					NAME: 'Cornwall Pipeline',
-					DATE: '2020-01-02',
-					LATITUDE: 129.17,
-					LONGITUDE: -115.25,
-				},
-				{
-					OBJECTID: 2,
-					COUNTRY: 'Canada',
-					NAME: 'Mainline',
-					DATE: '2019-12-25',
-					LATITUDE: 132.38,
-					LONGITUDE: -118.72,
-				},
-				{
-					OBJECTID: 3,
-					COUNTRY: 'United States',
-					NAME: 'Southern California Gas Co',
-					DATE: '2005-05-02',
-					LATITUDE: 31.34,
-					LONGITUDE: -110.97,
-				},
-				{
-					OBJECTID: 4,
-					COUNTRY: 'Canada',
-					NAME: 'Cornwall Pipeline',
-					DATE: '2020-01-15',
-					LATITUDE: 44.99,
-					LONGITUDE: -74.72,
-				},
-				{
-					OBJECTID: 5,
-					COUNTRY: 'United States',
-					NAME: 'Bluewater Pipeline Co',
-					DATE: '2019-11-29',
-					LATITUDE: 0,
-					LONGITUDE: 0,
-				},
-				{
-					OBJECTID: 6,
-					COUNTRY: 'United States',
-					NAME: 'San Diego Gas and Electric',
-					DATE: '2010-10-01',
-					LATITUDE: 32.55,
-					LONGITUDE: -116.90,
-				},
-				{
-					OBJECTID: 7,
-					COUNTRY: 'United States',
-					NAME: 'Maritimes & Northeast Pipeline Co',
-					DATE: '2012-12-31',
-					LATITUDE: 45.20,
-					LONGITUDE: -67.45,
-				},
-				{
-					OBJECTID: 8,
-					COUNTRY: 'United States',
-					NAME: 'Great Lakes Transmission',
-					DATE: '2015-07-01',
-					LATITUDE: 46.45,
-					LONGITUDE: -84.44,
-				},
-				{
-					OBJECTID: 9,
-					COUNTRY: 'United States',
-					NAME: 'Viking Gas Tranmssion',
-					DATE: '1998-05-14',
-					LATITUDE: 48.99,
-					LONGITUDE: -97.05,
-				},
-				{
-					OBJECTID: 10,
-					COUNTRY: 'Canada',
-					NAME: 'Carway Line',
-					DATE: '2024-06-06',
-					LATITUDE: 48.99,
-					LONGITUDE: -113.28,
-				},
-				{
-					OBJECTID: 11,
-					COUNTRY: 'Canada',
-					NAME: 'Mainline',
-					DATE: '2019-03-15',
-					LATITUDE: 45.22,
-					LONGITUDE: -67.43,
-				},
-				{
-					OBJECTID: 12,
-					COUNTRY: 'Canada',
-					NAME: 'Vector',
-					DATE: '2019-10-31',
-					LATITUDE: 42.79,
-					LONGITUDE: -82.47,
-				},
-			];
 		},
 	},
 	created() {
