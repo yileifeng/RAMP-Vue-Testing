@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import GridComponent from "./GridComponent";
+import GridComponent from "./table/grid-component";
 
 export default {
   name: "LeafComponent",

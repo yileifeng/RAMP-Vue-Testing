@@ -4,7 +4,6 @@ import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
 import App from './App.vue';
 import { LayerState, VisibilitySet } from './classes/LayerState.js';
-import PanelStateManager from './enhancedTable/panel-state-manager';
 
 Vue.use(VueMaterial);
 Vue.use(Vuex);
